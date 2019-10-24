@@ -1,4 +1,4 @@
-SOURCES = main.cpp
+SOURCES = Stopwatch.cpp TTP.cpp main.cpp
 
 all: main
 

@@ -5,10 +5,14 @@
 /*Filip Mazur*Dawid Ryl*Piotr Neumann*/
 /*************************************/
 
+#include "TTP.h"
 #include <iostream>
 
 int main()
 {
-
-	std::cout << "Hello\n";
+	TTP *testUnit = new TTP();
+	testUnit->initTTP();
+	delete(testUnit);
+	std::cin.ignore(1);
+	return 0;
 }
