@@ -23,23 +23,38 @@ private:
 		int maxWeight;
 		int currWeight;
 		float rentingRatio;
-		float maxSpeed;
 		float minSpeed;
+		float maxSpeed;
 		float currSpeed;
-		std::vector<valuableItem> stolenItems;
+		std::vector<int> stolenItemsList;
 	} myKnapsack;
 
-	std::vector<std::vector<float>> adjacancyMatrix;
-	std::vector<valuableItem> valuableItemsMatrix;
 	int noOfCities;
 	int noOfItems;
+	std::vector<std::vector<float>> adjacancyMatrix;
+	std::vector<valuableItem> valuableItemsMatrix;
 
 public:
-	TTP();
-	~TTP();
 	int start();
 	int initTTP();
+	
 	int getNoOfCities();
 	int getNoOfItems();
+	int getItemProfit(int);
+	int getItemWeight(int);
+	int getItemCity(int);
+	int getMaxWeight();
+	int getCurrWeight();
+	float getCurrRentingRatio();
+	float getMinSpeed();
+	float getMaxSpeed();
+	float getCurrSpeed();
+	std::vector<int> getStolenItemsList();
 	std::vector<std::vector<float>> getAdjacancyMatrix();
+
+	void setCurrWeight(int);
+	void setCurrSpeed();
+
+	TTP();
+	~TTP();
 };

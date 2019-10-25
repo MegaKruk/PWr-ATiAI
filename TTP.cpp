@@ -63,8 +63,8 @@ int TTP::initTTP()
 				myFile >> filePointer;
 				myKnapsack.maxWeight = atoi(filePointer.c_str());
 				myKnapsack.currWeight = 0;
-				myKnapsack.stolenItems.clear();
-				myKnapsack.stolenItems.resize(0);
+				myKnapsack.stolenItemsList.clear();
+				myKnapsack.stolenItemsList.resize(0);
 				std::cout << "Max weight:\t\t" << myKnapsack.maxWeight << std::endl;
 
 				do myFile >> filePointer;
@@ -77,6 +77,7 @@ int TTP::initTTP()
 				while (filePointer != "SPEED:");
 				myFile >> filePointer;
 				myKnapsack.maxSpeed = atof(filePointer.c_str());
+				myKnapsack.currSpeed = myKnapsack.maxSpeed;
 				std::cout << "Max speed:\t\t" << myKnapsack.maxSpeed << std::endl;
 
 				do myFile >> filePointer;
@@ -224,7 +225,7 @@ int TTP::initTTP()
 
 }
 
-//getters
+// getters
 
 int TTP::getNoOfCities()
 {
@@ -236,9 +237,70 @@ int TTP::getNoOfItems()
 	return noOfItems;
 }
 
+int TTP::getItemProfit(int index)
+{
+	return valuableItemsMatrix[index].profit;
+}
+
+int TTP::getItemWeight(int index)
+{
+	return valuableItemsMatrix[index].weight;
+}
+
+int TTP::getItemCity(int index)
+{
+	return valuableItemsMatrix[index].assignedCity;
+}
+
+int TTP::getMaxWeight()
+{
+	return myKnapsack.maxWeight;
+}
+
+int TTP::getCurrWeight()
+{
+	return myKnapsack.currWeight;
+}
+
+float TTP::getCurrRentingRatio()
+{
+	return myKnapsack.rentingRatio;
+}
+
+float TTP::getMinSpeed()
+{
+	return myKnapsack.minSpeed;
+}
+
+float TTP::getMaxSpeed()
+{
+	return myKnapsack.maxSpeed;
+}
+
+float TTP::getCurrSpeed()
+{
+	return myKnapsack.currSpeed;
+}
+
+std::vector<int> TTP::getStolenItemsList()
+{
+	return myKnapsack.stolenItemsList;
+}
+
 std::vector<std::vector<float>> TTP::getAdjacancyMatrix()
 {
 	return std::vector<std::vector<float>>(adjacancyMatrix);
+}
+
+void TTP::setCurrWeight(int stolenItemWeight)
+{
+	myKnapsack.currWeight =+ stolenItemWeight;
+}
+
+void TTP::setCurrSpeed()
+{
+	// uuuh math is hard ;_;
+	//currSpeed = 
 }
 
 TTP::TTP()
