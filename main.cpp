@@ -11,7 +11,7 @@
 int main()
 {
 	TTP *testUnit = new TTP();
-	testUnit->initTTP();
+	testUnit->start();
 	delete(testUnit);
 	std::cin.ignore(1);
 	return 0;
