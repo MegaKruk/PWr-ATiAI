@@ -135,7 +135,6 @@ int TTP::initTTP()
 						}
 						std::cout << std::endl;
 					}
-					//////////////////////////////////////////////////////////////////////////////////////////////////
 				}
 				else 
 				{
@@ -177,6 +176,22 @@ int TTP::initTTP()
 		case 2:
 		{
 			// test greedy
+
+			// just testing some math DONT DELET PLS
+			/*std::cout << "\ncS:" << getCurrSpeed();
+			std::cout << "\ncW:" << getCurrWeight() << std::endl;
+			setCurrSpeed();
+			std::cout << "\ncS:" << getCurrSpeed();
+			std::cout << "\ncW:" << getCurrWeight() << std::endl;
+			increaseCurrWeight(1123);
+			setCurrSpeed();
+			std::cout << "\ncS:" << getCurrSpeed();
+			std::cout << "\ncW:" << getCurrWeight() << std::endl;
+			increaseCurrWeight(1123);
+			setCurrSpeed();
+			std::cout << "\ncS:" << getCurrSpeed();
+			std::cout << "\ncW:" << getCurrWeight() << std::endl;*/
+			
 			break;
 		}
 		case 3:
@@ -226,7 +241,6 @@ int TTP::initTTP()
 }
 
 // getters
-
 int TTP::getNoOfCities()
 {
 	return noOfCities;
@@ -237,12 +251,12 @@ int TTP::getNoOfItems()
 	return noOfItems;
 }
 
-int TTP::getItemProfit(int index)
+float TTP::getItemProfit(int index)
 {
 	return valuableItemsMatrix[index].profit;
 }
 
-int TTP::getItemWeight(int index)
+float TTP::getItemWeight(int index)
 {
 	return valuableItemsMatrix[index].weight;
 }
@@ -252,12 +266,12 @@ int TTP::getItemCity(int index)
 	return valuableItemsMatrix[index].assignedCity;
 }
 
-int TTP::getMaxWeight()
+float TTP::getMaxWeight()
 {
 	return myKnapsack.maxWeight;
 }
 
-int TTP::getCurrWeight()
+float TTP::getCurrWeight()
 {
 	return myKnapsack.currWeight;
 }
@@ -292,15 +306,17 @@ std::vector<std::vector<float>> TTP::getAdjacancyMatrix()
 	return std::vector<std::vector<float>>(adjacancyMatrix);
 }
 
-void TTP::setCurrWeight(int stolenItemWeight)
+// setters
+void TTP::increaseCurrWeight(float stolenItemWeight)
 {
-	myKnapsack.currWeight =+ stolenItemWeight;
+	myKnapsack.currWeight += stolenItemWeight;
 }
 
 void TTP::setCurrSpeed()
 {
-	// uuuh math is hard ;_;
-	//currSpeed = 
+	//std::cout << "\ndla cW:" << myKnapsack.currWeight;
+	myKnapsack.currSpeed = myKnapsack.minSpeed + (((myKnapsack.maxWeight - myKnapsack.currWeight) / myKnapsack.maxWeight) * (myKnapsack.maxSpeed - myKnapsack.minSpeed));
+	//std::cout << "\tcS to:" << myKnapsack.currSpeed;
 }
 
 TTP::TTP()

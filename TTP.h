@@ -13,15 +13,15 @@ class TTP
 private:
 	struct valuableItem
 	{
-		int profit;
-		int weight;
+		float profit;
+		float weight;
 		int assignedCity;
 	};
 
 	struct thiefKnapsack
 	{
-		int maxWeight;
-		int currWeight;
+		float maxWeight;
+		float currWeight;
 		float rentingRatio;
 		float minSpeed;
 		float maxSpeed;
@@ -40,11 +40,11 @@ public:
 	
 	int getNoOfCities();
 	int getNoOfItems();
-	int getItemProfit(int);
-	int getItemWeight(int);
+	float getItemProfit(int);
+	float getItemWeight(int);
 	int getItemCity(int);
-	int getMaxWeight();
-	int getCurrWeight();
+	float getMaxWeight();
+	float getCurrWeight();
 	float getCurrRentingRatio();
 	float getMinSpeed();
 	float getMaxSpeed();
@@ -52,7 +52,7 @@ public:
 	std::vector<int> getStolenItemsList();
 	std::vector<std::vector<float>> getAdjacancyMatrix();
 
-	void setCurrWeight(int);
+	void increaseCurrWeight(float);
 	void setCurrSpeed();
 
 	TTP();
