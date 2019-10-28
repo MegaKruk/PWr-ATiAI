@@ -1,5 +1,8 @@
 #include "Stopwatch.h"
 #include "TTP.h"
+#include "GreedySearch.h"
+#include "Knapsack.h"
+#include "Item.h"
 
 int TTP::start()
 {
@@ -36,8 +39,9 @@ int TTP::initTTP()
 
 			Stopwatch *timer = new Stopwatch();
 			timer->point1 = std::chrono::high_resolution_clock::now();
-			
-			myFile.open("data/" + filename);
+
+//			myFile.open("data/" + filename);
+			myFile.open("D:\\Studia\\Magisterka\\AI\\Project\\PWr-ATiAI\\data\\" + filename);
 			if (myFile.is_open())
 			{
 				do myFile >> filePointer;
@@ -136,7 +140,7 @@ int TTP::initTTP()
 						std::cout << std::endl;
 					}
 				}
-				else 
+				else
 				{
 					std::cout << "\nError! Unsupported format.";
 					myFile.close();
@@ -165,7 +169,7 @@ int TTP::initTTP()
 				}
 				std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			}
-			else 
+			else
 			{
 				std::cout << "Error! No such file in 'data' directory";
 				break;
@@ -175,23 +179,32 @@ int TTP::initTTP()
 		}
 		case 2:
 		{
+		    GreedySearch greedySearch;
+		    Knapsack knapsack(myKnapsack.maxWeight, myKnapsack.currWeight, myKnapsack.rentingRatio, myKnapsack.minSpeed, myKnapsack.maxSpeed, myKnapsack.currSpeed);
+		    std::vector<Item> itemsMatrix;
+            for (int i = 0; i < valuableItemsMatrix.size(); i++) {
+                Item item(valuableItemsMatrix[i].weight, valuableItemsMatrix[i].profit, valuableItemsMatrix[i].assignedCity);
+                itemsMatrix.push_back(item);
+            }
+		    std::pair<std::vector<int>, std::vector<int>> result = greedySearch.evaluateGreedy(0, adjacancyMatrix, itemsMatrix, knapsack);
+
 			// test greedy
 
 			// just testing some math DONT DELET PLS
-			/*std::cout << "\ncS:" << getCurrSpeed();
-			std::cout << "\ncW:" << getCurrWeight() << std::endl;
-			setCurrSpeed();
-			std::cout << "\ncS:" << getCurrSpeed();
-			std::cout << "\ncW:" << getCurrWeight() << std::endl;
-			increaseCurrWeight(1123);
-			setCurrSpeed();
-			std::cout << "\ncS:" << getCurrSpeed();
-			std::cout << "\ncW:" << getCurrWeight() << std::endl;
-			increaseCurrWeight(1123);
-			setCurrSpeed();
-			std::cout << "\ncS:" << getCurrSpeed();
-			std::cout << "\ncW:" << getCurrWeight() << std::endl;*/
-			
+//			std::cout << "\ncS:" << getCurrSpeed();
+//			std::cout << "\ncW:" << getCurrWeight() << std::endl;
+//			setCurrSpeed();
+//			std::cout << "\ncS:" << getCurrSpeed();
+//			std::cout << "\ncW:" << getCurrWeight() << std::endl;
+//			increaseCurrWeight(1123);
+//			setCurrSpeed();
+//			std::cout << "\ncS:" << getCurrSpeed();
+//			std::cout << "\ncW:" << getCurrWeight() << std::endl;
+//			increaseCurrWeight(1123);
+//			setCurrSpeed();
+//			std::cout << "\ncS:" << getCurrSpeed();
+//			std::cout << "\ncW:" << getCurrWeight() << std::endl;
+
 			break;
 		}
 		case 3:
