@@ -1,3 +1,7 @@
+
+#ifndef TTP1
+#define TTP1
+
 #include <stdlib.h>
 #include <string>
 #include <limits.h>
@@ -58,3 +62,5 @@ public:
 	TTP();
 	~TTP();
 };
+
+#endif //UNTITLED1_TTP
