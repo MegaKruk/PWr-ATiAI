@@ -1,3 +1,7 @@
+
+#ifndef TTP1
+#define TTP1
+
 #include <stdlib.h>
 #include <string>
 #include <limits.h>
@@ -7,32 +11,16 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
+#include "Item.h"
+#include "Knapsack.h"
 
 class TTP
 {
 private:
-	struct valuableItem
-	{
-		float profit;
-		float weight;
-		int assignedCity;
-	};
-
-	struct thiefKnapsack
-	{
-		float maxWeight;
-		float currWeight;
-		float rentingRatio;
-		float minSpeed;
-		float maxSpeed;
-		float currSpeed;
-		std::vector<int> stolenItemsList;
-	} myKnapsack;
-
 	int noOfCities;
 	int noOfItems;
 	std::vector<std::vector<float>> adjacancyMatrix;
-	std::vector<valuableItem> valuableItemsMatrix;
+	std::vector<Item> valuableItemsMatrix;
 
 public:
 	int start();
@@ -58,3 +46,5 @@ public:
 	TTP();
 	~TTP();
 };
+
+#endif //UNTITLED1_TTP
