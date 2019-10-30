@@ -26,6 +26,8 @@ private:
     float weight;
     int assignedCity;
 public:
+    Item();
+
     Item(float profit, float weight, int assignedCity);
 
     virtual ~Item();

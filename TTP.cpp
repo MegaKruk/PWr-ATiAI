@@ -12,6 +12,8 @@ int TTP::start()
 
 int TTP::initTTP()
 {
+    Item item;
+    Knapsack knapsack;
 	while (1)
 	{
 		int option;
@@ -65,30 +67,30 @@ int TTP::initTTP()
 				do myFile >> filePointer;
 				while (filePointer != "KNAPSACK:");
 				myFile >> filePointer;
-				myKnapsack.maxWeight = atoi(filePointer.c_str());
-				myKnapsack.currWeight = 0;
-				myKnapsack.stolenItemsList.clear();
-				myKnapsack.stolenItemsList.resize(0);
-				std::cout << "Max weight:\t\t" << myKnapsack.maxWeight << std::endl;
+				knapsack.setMaxWeight(atoi(filePointer.c_str()));
+				knapsack.setCurrWeight(0);
+//				myKnapsack.stolenItemsList.clear();
+//				myKnapsack.stolenItemsList.resize(0);
+				std::cout << "Max weight:\t\t" << knapsack.getMaxWeight() << std::endl;
 
 				do myFile >> filePointer;
 				while (filePointer != "SPEED:");
 				myFile >> filePointer;
-				myKnapsack.minSpeed = atof(filePointer.c_str());
-				std::cout << "Min speed:\t\t" << myKnapsack.minSpeed << std::endl;
+				knapsack.setMinSpeed(atof(filePointer.c_str()));
+				std::cout << "Min speed:\t\t" << knapsack.getMinSpeed() << std::endl;
 
 				do myFile >> filePointer;
 				while (filePointer != "SPEED:");
 				myFile >> filePointer;
-				myKnapsack.maxSpeed = atof(filePointer.c_str());
-				myKnapsack.currSpeed = myKnapsack.maxSpeed;
-				std::cout << "Max speed:\t\t" << myKnapsack.maxSpeed << std::endl;
+				knapsack.setMaxSpeed(atof(filePointer.c_str()));
+				knapsack.setCurrSpeed(knapsack.getMaxSpeed());
+				std::cout << "Max speed:\t\t" << knapsack.getMaxSpeed() << std::endl;
 
 				do myFile >> filePointer;
 				while (filePointer != "RATIO:");
 				myFile >> filePointer;
-				myKnapsack.rentingRatio = atof(filePointer.c_str());
-				std::cout << "Renting ratio:\t\t" << myKnapsack.rentingRatio << std::endl;
+				knapsack.setRentingRatio(atof(filePointer.c_str()));
+				std::cout << "Renting ratio:\t\t" << knapsack.getRentingRatio() << std::endl;
 
 				do myFile >> filePointer;
 				while (filePointer != "EDGE_WEIGHT_TYPE:");
@@ -156,16 +158,16 @@ int TTP::initTTP()
 					std::cout << std::endl << atoi(filePointer.c_str()) - 1 << "\t";
 
 					myFile >> filePointer;
-					valuableItemsMatrix[i].profit = atoi(filePointer.c_str());
-					std::cout << valuableItemsMatrix[i].profit << "\t";
+					valuableItemsMatrix[i].setProfit(atoi(filePointer.c_str()));
+					std::cout << valuableItemsMatrix[i].getProfit() << "\t";
 
 					myFile >> filePointer;
-					valuableItemsMatrix[i].weight = atoi(filePointer.c_str());
-					std::cout << valuableItemsMatrix[i].weight << "\t";
+					valuableItemsMatrix[i].setWeight(atoi(filePointer.c_str()));
+					std::cout << valuableItemsMatrix[i].getWeight() << "\t";
 
 					myFile >> filePointer;
-					valuableItemsMatrix[i].assignedCity = atoi(filePointer.c_str()) - 1;
-					std::cout << valuableItemsMatrix[i].assignedCity << "\t";
+					valuableItemsMatrix[i].setAssignedCity(atoi(filePointer.c_str()) - 1);
+					std::cout << valuableItemsMatrix[i].getAssignedCity() << "\t";
 				}
 				std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			}
@@ -180,31 +182,12 @@ int TTP::initTTP()
 		case 2:
 		{
 		    GreedySearch greedySearch;
-		    Knapsack knapsack(myKnapsack.maxWeight, myKnapsack.currWeight, myKnapsack.rentingRatio, myKnapsack.minSpeed, myKnapsack.maxSpeed, myKnapsack.currSpeed);
-		    std::vector<Item> itemsMatrix;
-            for (int i = 0; i < valuableItemsMatrix.size(); i++) {
-                Item item(valuableItemsMatrix[i].weight, valuableItemsMatrix[i].profit, valuableItemsMatrix[i].assignedCity);
-                itemsMatrix.push_back(item);
-            }
-		    std::pair<std::vector<int>, std::vector<int>> result = greedySearch.evaluateGreedy(0, adjacancyMatrix, itemsMatrix, knapsack);
-
-			// test greedy
-
-			// just testing some math DONT DELET PLS
-//			std::cout << "\ncS:" << getCurrSpeed();
-//			std::cout << "\ncW:" << getCurrWeight() << std::endl;
-//			setCurrSpeed();
-//			std::cout << "\ncS:" << getCurrSpeed();
-//			std::cout << "\ncW:" << getCurrWeight() << std::endl;
-//			increaseCurrWeight(1123);
-//			setCurrSpeed();
-//			std::cout << "\ncS:" << getCurrSpeed();
-//			std::cout << "\ncW:" << getCurrWeight() << std::endl;
-//			increaseCurrWeight(1123);
-//			setCurrSpeed();
-//			std::cout << "\ncS:" << getCurrSpeed();
-//			std::cout << "\ncW:" << getCurrWeight() << std::endl;
-
+		    std::pair<std::vector<int>, std::vector<std::string>> result = greedySearch.evaluateGreedy(0, adjacancyMatrix, valuableItemsMatrix, knapsack);
+            for (auto i = result.first.begin(); i != result.first.end(); ++i)
+                std::cout << *i << ' ';
+            std::cout << std::endl;
+            for (auto i = result.second.begin(); i != result.second.end(); ++i)
+                std::cout << *i << ' ';
 			break;
 		}
 		case 3:
@@ -249,8 +232,6 @@ int TTP::initTTP()
 		}
 		}
 	}
-
-
 }
 
 // getters
@@ -264,71 +245,16 @@ int TTP::getNoOfItems()
 	return noOfItems;
 }
 
-float TTP::getItemProfit(int index)
-{
-	return valuableItemsMatrix[index].profit;
-}
-
-float TTP::getItemWeight(int index)
-{
-	return valuableItemsMatrix[index].weight;
-}
-
-int TTP::getItemCity(int index)
-{
-	return valuableItemsMatrix[index].assignedCity;
-}
-
-float TTP::getMaxWeight()
-{
-	return myKnapsack.maxWeight;
-}
-
-float TTP::getCurrWeight()
-{
-	return myKnapsack.currWeight;
-}
-
-float TTP::getCurrRentingRatio()
-{
-	return myKnapsack.rentingRatio;
-}
-
-float TTP::getMinSpeed()
-{
-	return myKnapsack.minSpeed;
-}
-
-float TTP::getMaxSpeed()
-{
-	return myKnapsack.maxSpeed;
-}
-
-float TTP::getCurrSpeed()
-{
-	return myKnapsack.currSpeed;
-}
-
-std::vector<int> TTP::getStolenItemsList()
-{
-	return myKnapsack.stolenItemsList;
-}
 
 std::vector<std::vector<float>> TTP::getAdjacancyMatrix()
 {
 	return std::vector<std::vector<float>>(adjacancyMatrix);
 }
 
-// setters
-void TTP::increaseCurrWeight(float stolenItemWeight)
-{
-	myKnapsack.currWeight += stolenItemWeight;
-}
-
 void TTP::setCurrSpeed()
 {
 	//std::cout << "\ndla cW:" << myKnapsack.currWeight;
-	myKnapsack.currSpeed = myKnapsack.minSpeed + (((myKnapsack.maxWeight - myKnapsack.currWeight) / myKnapsack.maxWeight) * (myKnapsack.maxSpeed - myKnapsack.minSpeed));
+//	myKnapsack.currSpeed = myKnapsack.minSpeed + (((myKnapsack.maxWeight - myKnapsack.currWeight) / myKnapsack.maxWeight) * (myKnapsack.maxSpeed - myKnapsack.minSpeed));
 	//std::cout << "\tcS to:" << myKnapsack.currSpeed;
 }
 

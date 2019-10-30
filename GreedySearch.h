@@ -16,7 +16,7 @@ private:
 
 public:
 
-    std::pair<std::vector<int>, std::vector<int>>
+    std::pair<std::vector<int>, std::vector<std::string>>
     evaluateGreedy(int startCity, std::vector<std::vector<float>> vector, std::vector<Item> vector1, Knapsack knapsack);
 
     std::vector<Item> getItemsFromCurrCity(int currCity, std::vector<Item> items);

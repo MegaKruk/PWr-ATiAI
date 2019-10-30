@@ -3,6 +3,7 @@
 //
 
 #include "Item.h"
+
 float Item::getProfit() const {
     return profit;
 }
@@ -28,6 +29,8 @@ void Item::setAssignedCity(int assignedCity) {
 }
 
 Item::Item(float profit, float weight, int assignedCity) : profit(profit), weight(weight), assignedCity(assignedCity) {}
+
+Item::Item() {}
 
 Item::~Item() {
 

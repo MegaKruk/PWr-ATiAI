@@ -63,3 +63,5 @@ void Knapsack::setStolenItemsList(const std::vector<int> &stolenItemsList) {
 Knapsack::Knapsack(float maxWeight, float currWeight, float rentingRatio, float minSpeed, float maxSpeed,
                    float currSpeed) : maxWeight(maxWeight), currWeight(currWeight), rentingRatio(rentingRatio),
                                       minSpeed(minSpeed), maxSpeed(maxSpeed), currSpeed(currSpeed) {}
+
+Knapsack::Knapsack() {}

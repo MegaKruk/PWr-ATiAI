@@ -6,52 +6,53 @@
 #include "Item.h"
 #include "Knapsack.h"
 
-std::pair<std::vector<int>, std::vector<int>>
+std::pair<std::vector<int>, std::vector<std::string>>
 GreedySearch::evaluateGreedy(int startCity, std::vector<std::vector<float>> cities, std::vector<Item> allItems,
                              Knapsack knapsack) {
 
-
-    std::vector<int> vCities;
+    std::vector<int> visitedCities;
     std::vector<int> citiesResult;
     std::vector<std::string> knapsackResult;
-
-
     for (int k = 0; k < cities.size(); ++k) {
-        vCities.push_back(k);
+        visitedCities.push_back(k);
     }
-    vCities.erase(std::remove(vCities.begin(), vCities.end(), startCity), vCities.end());
-
     int currentCity = startCity;
-    for (int z = 0; z < vCities.size(); ++z) {
+    while (!visitedCities.empty()) {
         citiesResult.push_back(currentCity);
+        visitedCities.erase(std::remove(visitedCities.begin(), visitedCities.end(), currentCity), visitedCities.end());
         int indexPickedItem = -1;
-        float bestResult = -1000;
+        float bestResult = -10000;
+        float bestDistance = 100000;
         std::vector<Item> items = getItemsFromCurrCity(currentCity, allItems);
-        for (int i = 0; i < vCities.size(); ++i) {
-            for (int j = 0; j < items.size(); ++j) {
-                float currSpeed = knapsack.getCurrSpeed(items[j].getWeight());
-                float distance = cities[currentCity][vCities[i]];
-                float g = items[j].getProfit() - distance / currSpeed;
-                if (g > bestResult) {
-                    bestResult = g;
-                    currentCity = vCities[i];
-                    indexPickedItem = j;
+        for (int toCity: visitedCities) {
+            //if no items then evaluate distance
+            if (items.size() == 0) {
+                float distance = cities[currentCity][toCity];
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    currentCity = toCity;
+                }
+            } else {
+                for (int j = 0; j < items.size(); ++j) {
+                    float currSpeed = knapsack.getCurrSpeed(items[j].getWeight());
+                    float distance = cities[currentCity][toCity];
+                    float g = items[j].getProfit() - distance / currSpeed;
+                    if (g > bestResult) {
+                        bestResult = g;
+                        currentCity = toCity;
+                        indexPickedItem = j;
+                    }
                 }
             }
+
         }
         knapsackResult.push_back(std::to_string(currentCity) + " " + std::to_string(indexPickedItem));
-        vCities.erase(std::remove(vCities.begin(), vCities.end(), currentCity), vCities.end());
-
     }
-
-    for (int i = 0; i < cities.size(); ++i) {
-        for (int j = 0; j < cities[i].size(); ++j) {
-            std::cout << cities[i][j];
-        }
-    }
-
-
-    return std::pair<std::vector<int>, std::vector<int>>();
+    citiesResult.push_back(startCity);
+    std::pair<std::vector<int>, std::vector<std::string>> result;
+    result.first = citiesResult;
+    result.second = knapsackResult;
+    return result;
 }
 
 std::vector<Item> GreedySearch::getItemsFromCurrCity(int currCity, std::vector<Item> allItems) {

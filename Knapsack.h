@@ -19,6 +19,8 @@ private:
     float currSpeed;
     std::vector<int> stolenItemsList;
 public:
+    Knapsack();
+
     Knapsack(float maxWeight, float currWeight, float rentingRatio, float minSpeed, float maxSpeed, float currSpeed);
 
     float getMaxWeight() const;
