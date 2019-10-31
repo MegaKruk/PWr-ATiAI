@@ -3,6 +3,7 @@
 #include "GreedySearch.h"
 #include "Knapsack.h"
 #include "Item.h"
+#include "SA.h"
 
 int TTP::start()
 {
@@ -42,8 +43,8 @@ int TTP::initTTP()
 			Stopwatch *timer = new Stopwatch();
 			timer->point1 = std::chrono::high_resolution_clock::now();
 
-//			myFile.open("data/" + filename);
-			myFile.open("D:\\Studia\\Magisterka\\AI\\Project\\PWr-ATiAI\\data\\" + filename);
+			myFile.open("data/" + filename);
+			//myFile.open("D:\\Studia\\Magisterka\\AI\\Project\\PWr-ATiAI\\data\\" + filename);
 			if (myFile.is_open())
 			{
 				do myFile >> filePointer;
