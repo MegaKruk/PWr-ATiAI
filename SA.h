@@ -20,10 +20,13 @@ private:
 public:
 	SA();
 	~SA();
-	int pathInit(std::vector<int> &calcPath, int noOfCities);
-	int calculateCost(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities);
+	std::vector<int> pathInit(int noOfCities);
+	std::vector<int> itemsInit(int noOfItems);
+	float calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList, int noOfItems);
+	float calculateCost(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities);
 
-	int calculateProfit();  
+	float calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, 
+						  std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems);  
 	
 	int randInt(int l, int r);
 	double randFraction(void);
@@ -32,7 +35,7 @@ public:
 	std::vector<int> getCalcPath();
 	std::vector<int> getStolenItemsList();
 
-	int solverSA(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, std::vector<int> &calcPath, 
-				 std::vector<int> &stolenItemsList, int noOfCities, int noOfItems); 
+	int solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
+				 std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems); 
 };
 

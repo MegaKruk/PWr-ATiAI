@@ -194,6 +194,10 @@ int TTP::initTTP()
 		case 3:
 		{
 			// test sa
+			SA mySolverSA;
+			std::vector<int> firstPath = mySolverSA.pathInit(noOfCities);
+			std::vector<int> items = mySolverSA.itemsInit(noOfItems);
+			mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, items, noOfCities, noOfItems);
 			break;
 		}
 		case 4:
