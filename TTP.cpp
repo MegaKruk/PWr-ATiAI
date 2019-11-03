@@ -20,9 +20,9 @@ int TTP::initTTP()
 		int option;
 		std::cout << "\n1 - Load data";
 		std::cout << "\n2 - Test Greedy Algorithm";
-		std::cout << "\n3 - Test Simulated Annealing (NOT YET READY)";
+		std::cout << "\n3 - Test Simulated Annealing";
 		std::cout << "\n4 - Test Genetic Algorithm (NOT YET READY)";
-		std::cout << "\n5 - Make measurements for Greedy Algorithm";
+		std::cout << "\n5 - Make measurements for Greedy Algorithm (NOT YET READY)";
 		std::cout << "\n6 - Make measurements for Simulated Annealing (NOT YET READY)";
 		std::cout << "\n7 - Make measurements for Genetic Algorithm (NOT YET READY)";
 		std::cout << "\n8 - Modify parameters (NOT YET READY)";
@@ -70,8 +70,8 @@ int TTP::initTTP()
 				myFile >> filePointer;
 				knapsack.setMaxWeight(atoi(filePointer.c_str()));
 				knapsack.setCurrWeight(0);
-//				myKnapsack.stolenItemsList.clear();
-//				myKnapsack.stolenItemsList.resize(0);
+				//knapsack.getStolenItemsList().clear();
+				//knapsack.getStolenItemsList().resize(0);
 				std::cout << "Max weight:\t\t" << knapsack.getMaxWeight() << std::endl;
 
 				do myFile >> filePointer;
@@ -84,7 +84,7 @@ int TTP::initTTP()
 				while (filePointer != "SPEED:");
 				myFile >> filePointer;
 				knapsack.setMaxSpeed(atof(filePointer.c_str()));
-				knapsack.setCurrSpeed(knapsack.getMaxSpeed());
+				knapsack.setCurrSpeed();
 				std::cout << "Max speed:\t\t" << knapsack.getMaxSpeed() << std::endl;
 
 				do myFile >> filePointer;
@@ -247,17 +247,17 @@ int TTP::getNoOfItems()
 }
 
 
-std::vector<std::vector<float>> TTP::getAdjacancyMatrix()
+std::vector<std::vector<float>> TTP::getAdjacancyMatrix() 
 {
 	return std::vector<std::vector<float>>(adjacancyMatrix);
 }
 
-void TTP::setCurrSpeed()
+/*void TTP::setCurrSpeed()
 {
-	//std::cout << "\ndla cW:" << myKnapsack.currWeight;
-//	myKnapsack.currSpeed = myKnapsack.minSpeed + (((myKnapsack.maxWeight - myKnapsack.currWeight) / myKnapsack.maxWeight) * (myKnapsack.maxSpeed - myKnapsack.minSpeed));
-	//std::cout << "\tcS to:" << myKnapsack.currSpeed;
-}
+	//std::cout << "\ndla cW:" << knapsack.currWeight;
+	knapsack.currSpeed = knapsack.minSpeed + (((knapsack.maxWeight - knapsack.currWeight) / knapsack.maxWeight) * (knapsack.maxSpeed - knapsack.minSpeed));
+	//std::cout << "\tcS to:" << knapsack.currSpeed;
+}*/
 
 TTP::TTP()
 {

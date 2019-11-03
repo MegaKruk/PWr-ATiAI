@@ -33,11 +33,6 @@ int SA::calculateCost(std::vector<std::vector<int>> &adjacancyMatrix, std::vecto
 	return tmpCost;
 }
 
-int SA::itemsInit()
-{
-	return 0;
-}
-
 int SA::calculateProfit()
 {
 	return 0;
@@ -62,6 +57,22 @@ std::vector<Item> SA::getItemsFromCurrCity(int currCity, std::vector<Item> allIt
 			currItems.push_back(allItems[i]);
 	}
 	return currItems;
+}
+
+std::vector<int> SA::getCalcPath(void)
+{
+	return std::vector<int>(calcPath);
+}
+
+std::vector<int> SA::getStolenItemsList(void)
+{
+	return std::vector<int>(stolenItemsList);
+}
+
+int SA::solverSA(std::vector<std::vector<int>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, std::vector<int> &calcPath, 
+				 std::vector<int> &stolenItemsList, int noOfCities, int noOfItems)
+{
+	return 0;
 }
 
 SA::SA()

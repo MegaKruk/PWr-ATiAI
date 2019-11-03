@@ -45,13 +45,17 @@ public:
 
     float getCurrSpeed() const;
 
-    void setCurrSpeed(float currSpeed);
+    void setCurrSpeed();
 
     const std::vector<int> &getStolenItemsList() const;
 
     void setStolenItemsList(const std::vector<int> &stolenItemsList);
 
     float getCurrSpeed(float stolenItemWeight) const;
+
+    void clearKnapsack();
+
+    void increaseCurrWeight(float);
 };
 
 
