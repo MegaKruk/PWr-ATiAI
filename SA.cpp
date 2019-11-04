@@ -17,10 +17,11 @@ std::vector<int> SA::pathInit(int noOfCities)
 	return calcPath;
 }
 
-std::vector<int> SA::itemsInit(int noOfItems)
+std::vector<int> SA::itemsInit(int noOfItems, Knapsack& knapsack)
 {
-	stolenItemsList.clear();
-	stolenItemsList.resize(noOfItems + 1);
+	knapsack.setCurrWeight(0);
+	std::vector<int> stolenItemsList;
+	stolenItemsList.resize(noOfItems);
 	for (int i = 0; i < noOfItems; i++)
 	{
 		stolenItemsList[i] = i;
@@ -41,9 +42,9 @@ float SA::calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<in
 	return calcWeight;
 }
 
-float SA::calculateCost(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities)
+float SA::calculateDist(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities)
 {
-	float tmpCost = 0;
+	float tmpDist = 0;
 	for (int i = 0; i < noOfCities; i++)
 	{
 		//std::cout << endl << seq[i] << endl;
@@ -51,32 +52,66 @@ float SA::calculateCost(std::vector<std::vector<float>> &adjacancyMatrix, std::v
 		//std::cout << endl << "a= "<< a;
 		int b = calcPath[i + 1];
 		//std::cout << endl << "b= " << b;
-		tmpCost += adjacancyMatrix[a][b % (noOfCities)];
+		tmpDist += adjacancyMatrix[a][b % (noOfCities)];
 
 	}
-	return tmpCost;
+	return tmpDist;
 }
 
 float SA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, 
-						  std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems)
+						  std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
+						  Knapsack& knapsack)
 {
-	return 0;
+	knapsack.setCurrWeight(0);
+	knapsack.setCurrSpeed();
+	float tmpDist = 0;
+	float tmpTime = 0;
+	float tmpProfit = 0;
+	for(int i = 0; i < noOfCities; i++)
+	{
+		for(int j = 0; j < stolenItemsList.size(); j++)
+		{
+			if(calcPath[i] == valuableItemsMatrix[stolenItemsList[j]].getAssignedCity())
+			{
+				knapsack.increaseCurrWeight(valuableItemsMatrix[stolenItemsList[j]].getWeight());
+				tmpProfit += valuableItemsMatrix[j].getProfit();
+			}
+		}
+		knapsack.setCurrSpeed();
+		int matrixX = calcPath[i];
+		int matrixY = calcPath[i + 1];
+		tmpDist += adjacancyMatrix[matrixX][matrixY % noOfCities];
+		tmpTime += knapsack.getSpeed() / tmpDist;
+		tmpProfit -= tmpTime * knapsack.getRentingRatio();
+	}
+	return tmpProfit;
 }
 
 int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, std::vector<int> &calcPath, 
-				 std::vector<int> &stolenItemsList, int noOfCities, int noOfItems)
+				 std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, Knapsack& knapsack)
 {
+	// 1. travel from city[0] to city[1] | T = v/s | P -= R * T
+	// 2. if there is item from steal-list pick it up
+	// 3. set new currWeight and currSpeed
+	// 4. repeat 1-3 until all cities are visited
+	// 5. come back to city[0] - REMEMBER TO CHANGE PROFIT!
+	// 6. return final profit
+
+	float bestProfit = std::numeric_limits<float>::min();
+	float bestWeight = -1;
+	std::vector<int> bestPath;
+	std::vector<int> bestItems;
+
 	// s - initial candidate
-	int currProfit = calculateCost(adjacancyMatrix, calcPath, noOfCities);
+	float currProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, calcPath, stolenItemsList, 
+									   noOfCities, noOfItems, knapsack);
 
 	// best = s
-	int bestProfit = currProfit;
+	bestProfit = currProfit;
 
-	std::vector<int> bestPath;
 	bestPath.clear();
 	bestPath.resize(noOfCities + 1);
 	
-	std::vector<int> bestItems;
 	bestItems.clear();
 	bestItems.resize(noOfItems);
 
@@ -85,50 +120,88 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 		bestPath[i] = calcPath[i];
 	}
 
-	for (int i = 0; i < noOfItems + 1; i++)
+	for (int i = 0; i < stolenItemsList.size(); i++)
 	{
 		bestItems[i] = stolenItemsList[i];
+		//std::cout << std::endl << bestItems[i];
 	}
+	
+	// check if we went over limit
+	while(calculateWeight(valuableItemsMatrix, bestItems, bestItems.size()) > knapsack.getMaxWeight())
+	{
+		// couts for debug
+		//std::cout << std::endl << "curr weight is " << calculateWeight(valuableItemsMatrix, bestItems, bestItems.size()) << "\tmax is " << knapsack.getMaxWeight();
+		std::swap(bestItems[rand() % bestItems.size()], bestItems.back());
+		//std::cout << std::endl << "popping " << bestItems.back();
+		bestItems.pop_back();
+	}
+	//std::cout << std::endl << "curr weight is " << calculateWeight(valuableItemsMatrix, bestItems, bestItems.size()) << "\tmax is " << knapsack.getMaxWeight();
 
-	calculateWeight(valuableItemsMatrix, stolenItemsList, noOfItems);
-
-	// glowna petla
-	for (double T = 1; T >= 1E-4; T *= 0.9)
+	// main loop
+	for (double T = 1; T >= 1E-9; T *= 0.95)	
+	{
 		for (int n = 0; n <= 100 * noOfCities; n++)
 		{
+			// r - tweak attempt for path
 			int i = randInt(1, noOfCities - 1);
 			int j = randInt(1, noOfCities - 1);
 			std::swap(calcPath[i], calcPath[j]);
 
-			// r - tweak attempt
-			int newProfit = calculateCost(adjacancyMatrix, calcPath, noOfCities);
+			// tweaking attempt for steal-list
+			std::vector<int> tmpItems;
+			tmpItems.resize(noOfItems);
+			for(int i = 0; i < noOfItems; i++)
+				tmpItems[i] = i;
+			while(calculateWeight(valuableItemsMatrix, tmpItems, tmpItems.size()) > knapsack.getMaxWeight())
+			{
+				std::swap(tmpItems[rand() % tmpItems.size()], tmpItems.back());
+				tmpItems.pop_back();
+			}
 
-			if (newProfit < currProfit || randFraction() < exp((currProfit - newProfit) / T))
+			int newProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, calcPath, tmpItems, 
+											noOfCities, noOfItems, knapsack);
+
+			if (newProfit > currProfit || randFraction() < exp((currProfit - newProfit) / T))
 			{
 				// s = r
 				currProfit = newProfit;
 
 				// best = s
-				if (currProfit < bestProfit)
+				if (currProfit > bestProfit)
 				{
 					bestProfit = currProfit;
-					for (int i = 0; i < noOfCities + 1; i++)
+					bestWeight = knapsack.getCurrWeight();
+					bestItems.clear();
+					bestItems.resize(tmpItems.size());
+					for (int i = 0; i < calcPath.size(); i++)
 					{
 						bestPath[i] = calcPath[i];
+					}
+					for(int i = 0; i < tmpItems.size(); i++)
+					{
+						bestItems[i] = tmpItems[i];
 					}
 				}
 			}
 			else
 				std::swap(calcPath[i], calcPath[j]);
 		}
-
+	}
 	std::cout << "\nProfit:\t" << bestProfit << std::endl;
+	std::cout << "Weight:\t" << bestWeight << " / " << knapsack.getMaxWeight() << std::endl;
 	std::cout << "Path:\t";
-	for (int i = 0; i < noOfCities + 1; i++)
+	for (int i = 0; i < bestPath.size(); i++)
 	{
 		std::cout << bestPath[i] << "\t";
 	}
+
+	std::cout << std::endl << "Items:\t";
+	for (int i = 0; i < bestItems.size(); i++)
+	{
+		std::cout << bestItems[i] << "\t";
+	}
 	bestPath.clear();
+	bestItems.clear();
 	return bestProfit;
 }
 

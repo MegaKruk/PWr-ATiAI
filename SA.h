@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
+#include <limits>
 #include "TTP.h"
 #include "Knapsack.h"
 #include "Item.h"
@@ -21,12 +22,13 @@ public:
 	SA();
 	~SA();
 	std::vector<int> pathInit(int noOfCities);
-	std::vector<int> itemsInit(int noOfItems);
+	std::vector<int> itemsInit(int noOfItems, Knapsack& knapsack);
 	float calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList, int noOfItems);
-	float calculateCost(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities);
+	float calculateDist(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities);
 
 	float calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, 
-						  std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems);  
+						  std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
+						  Knapsack& knapsack);  
 	
 	int randInt(int l, int r);
 	double randFraction(void);
@@ -36,6 +38,7 @@ public:
 	std::vector<int> getStolenItemsList();
 
 	int solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
-				 std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems); 
+				 std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
+				 Knapsack& knapsack); 
 };
 

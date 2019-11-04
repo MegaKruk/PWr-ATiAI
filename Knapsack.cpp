@@ -49,7 +49,12 @@ float Knapsack::getCurrSpeed(float stolenItemWeight) const {
     return getMaxSpeed() - getCurrWeight() * (getMaxSpeed() - getMinSpeed()) / stolenItemWeight;
 }
 
-//to zmienilem. teraz jest dobrze
+float Knapsack::getSpeed() const 
+{
+    return currSpeed;
+}
+
+// changed this. now it's working properly
 void Knapsack::setCurrSpeed() 
 {
     Knapsack::currSpeed = minSpeed + (((maxWeight - currWeight) / maxWeight) * (maxSpeed - minSpeed));

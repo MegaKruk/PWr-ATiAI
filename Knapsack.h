@@ -43,7 +43,7 @@ public:
 
     void setMaxSpeed(float maxSpeed);
 
-    float getCurrSpeed() const;
+    float getSpeed() const;
 
     void setCurrSpeed();
 

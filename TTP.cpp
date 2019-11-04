@@ -17,6 +17,7 @@ int TTP::initTTP()
     Knapsack knapsack;
 	while (1)
 	{
+		Stopwatch *timer = new Stopwatch();
 		int option;
 		std::cout << "\n1 - Load data";
 		std::cout << "\n2 - Test Greedy Algorithm";
@@ -40,7 +41,6 @@ int TTP::initTTP()
 			std::cout << "Enter filename. Must be in 'data' folder: \n";
 			std::cin >> filename;
 
-			Stopwatch *timer = new Stopwatch();
 			timer->point1 = std::chrono::high_resolution_clock::now();
 
 			myFile.open("data/" + filename);
@@ -196,8 +196,12 @@ int TTP::initTTP()
 			// test sa
 			SA mySolverSA;
 			std::vector<int> firstPath = mySolverSA.pathInit(noOfCities);
-			std::vector<int> items = mySolverSA.itemsInit(noOfItems);
-			mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, items, noOfCities, noOfItems);
+			std::vector<int> items = mySolverSA.itemsInit(noOfItems, knapsack);
+
+			timer->point1 = std::chrono::high_resolution_clock::now();
+			mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, items, noOfCities, noOfItems, knapsack);
+			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+			
 			break;
 		}
 		case 4:
