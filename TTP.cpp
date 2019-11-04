@@ -196,7 +196,7 @@ int TTP::initTTP()
 			// test sa
 			SA mySolverSA;
 			std::vector<int> firstPath = mySolverSA.pathInit(noOfCities);
-			std::vector<int> items = mySolverSA.itemsInit(noOfItems, knapsack);
+			std::vector<int> items = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
 
 			timer->point1 = std::chrono::high_resolution_clock::now();
 			mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, items, noOfCities, noOfItems, knapsack);

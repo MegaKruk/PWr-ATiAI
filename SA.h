@@ -22,7 +22,7 @@ public:
 	SA();
 	~SA();
 	std::vector<int> pathInit(int noOfCities);
-	std::vector<int> itemsInit(int noOfItems, Knapsack& knapsack);
+	std::vector<int> itemsInit(int noOfItems, Knapsack& knapsack, std::vector<Item> &valuableItemsMatrix);
 	float calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList, int noOfItems);
 	float calculateDist(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities);
 
