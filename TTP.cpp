@@ -156,6 +156,7 @@ int TTP::initTTP()
 				for (int i = 0; i < noOfItems; i++)
 				{
 					myFile >> filePointer;
+					valuableItemsMatrix[i].setIdItem(atoi(filePointer.c_str()) - 1);
 					std::cout << std::endl << atoi(filePointer.c_str()) - 1 << "\t";
 
 					myFile >> filePointer;
@@ -183,7 +184,7 @@ int TTP::initTTP()
 		case 2:
 		{
 		    GreedySearch greedySearch;
-		    std::pair<std::vector<int>, std::vector<std::string>> result = greedySearch.evaluateGreedy(0, adjacancyMatrix, valuableItemsMatrix, knapsack);
+		    std::pair<std::vector<int>, std::vector<int>> result = greedySearch.evaluateGreedy(0, adjacancyMatrix, valuableItemsMatrix, knapsack);
             for (auto i = result.first.begin(); i != result.first.end(); ++i)
                 std::cout << *i << ' ';
             std::cout << std::endl;

@@ -35,3 +35,11 @@ Item::Item() {}
 Item::~Item() {
 
 }
+
+int Item::getIdItem() const {
+    return id_item;
+}
+
+void Item::setIdItem(int idItem) {
+    id_item = idItem;
+}

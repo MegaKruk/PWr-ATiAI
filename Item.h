@@ -22,9 +22,15 @@ public:
     void setAssignedCity(int assignedCity);
 
 private:
+    int id_item;
     float profit;
     float weight;
     int assignedCity;
+public:
+    int getIdItem() const;
+
+    void setIdItem(int idItem);
+
 public:
     Item();
 
