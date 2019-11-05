@@ -6,13 +6,14 @@
 #include "Item.h"
 #include "Knapsack.h"
 
-std::pair<std::vector<int>, std::vector<std::string>>
+std::pair<std::vector<int>, std::vector<int>>
 GreedySearch::evaluateGreedy(int startCity, std::vector<std::vector<float>> cities, std::vector<Item> allItems,
                              Knapsack knapsack) {
 
     std::vector<int> visitedCities;
     std::vector<int> citiesResult;
-    std::vector<std::string> knapsackResult;
+    std::vector<std::pair<int, int>> knapsackResult;
+    std::vector<int> intknapsack;
     for (int k = 0; k < cities.size(); ++k) {
         visitedCities.push_back(k);
     }
@@ -46,12 +47,15 @@ GreedySearch::evaluateGreedy(int startCity, std::vector<std::vector<float>> citi
             }
 
         }
-        knapsackResult.push_back(std::to_string(currentCity) + " " + std::to_string(indexPickedItem));
+//        knapsackResult.push_back(std::to_string(currentCity) + " " + std::to_string(indexPickedItem));
+        knapsackResult.push_back(std::make_pair(currentCity, indexPickedItem));
     }
     citiesResult.push_back(startCity);
-    std::pair<std::vector<int>, std::vector<std::string>> result;
+    std::pair<std::vector<int>, std::vector<int>> result;
     result.first = citiesResult;
-    result.second = knapsackResult;
+    std::vector<int> normal = repairKnapsack(knapsackResult, allItems.size());
+    repairKnapsack(knapsackResult, allItems.size());
+    result.second = normal;
     return result;
 }
 
@@ -63,3 +67,21 @@ std::vector<Item> GreedySearch::getItemsFromCurrCity(int currCity, std::vector<I
     }
     return currItems;
 }
+
+std::vector<int> GreedySearch::repairKnapsack(std::vector<std::pair<int, int>> knapsack, int size) {
+    std::vector<int> normal;
+    for (int i = 0; i < size; i++) {
+        bool found = false;
+        for (int j = 0; j < knapsack.size() && !found; j++) {
+            if (i == knapsack[j].second) {
+                normal.push_back(knapsack[j].first);
+                found = true;
+            }
+        }
+        if (!found)
+            normal.push_back(0);
+    }
+    return normal;
+}
+
+
