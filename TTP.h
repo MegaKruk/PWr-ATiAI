@@ -28,7 +28,7 @@ public:
 	
 	int getNoOfCities();
 	int getNoOfItems();
-	float getItemProfit(int);
+	/*float getItemProfit(int);
 	float getItemWeight(int);
 	int getItemCity(int);
 	float getMaxWeight();
@@ -36,12 +36,12 @@ public:
 	float getCurrRentingRatio();
 	float getMinSpeed();
 	float getMaxSpeed();
-	float getCurrSpeed();
+	float getCurrSpeed();*/
 	std::vector<int> getStolenItemsList();
 	std::vector<std::vector<float>> getAdjacancyMatrix();
 
-	void increaseCurrWeight(float);
-	void setCurrSpeed();
+	//void increaseCurrWeight(float);
+	//void setCurrSpeed();
 
 	TTP();
 	~TTP();
