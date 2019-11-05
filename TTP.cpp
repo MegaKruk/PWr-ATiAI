@@ -155,6 +155,7 @@ int TTP::initTTP()
 				for (int i = 0; i < noOfItems; i++)
 				{
 					myFile >> filePointer;
+					valuableItemsMatrix[i].setIdItem(atoi(filePointer.c_str()) - 1);
 					std::cout << std::endl << atoi(filePointer.c_str()) - 1 << "\t";
 
 					myFile >> filePointer;

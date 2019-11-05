@@ -14,19 +14,20 @@ GreedySearch::evaluateGreedy(int startCity, std::vector<std::vector<float>> citi
     std::vector<int> citiesResult;
     std::vector<std::pair<int, int>> knapsackResult;
     std::vector<int> intknapsack;
+    int currWeight = 0;
     for (int k = 0; k < cities.size(); ++k) {
         visitedCities.push_back(k);
     }
     int currentCity = startCity;
     while (!visitedCities.empty()) {
         citiesResult.push_back(currentCity);
+        int actualCity = currentCity;
         visitedCities.erase(std::remove(visitedCities.begin(), visitedCities.end(), currentCity), visitedCities.end());
         int indexPickedItem = -1;
         float bestResult = -10000;
         float bestDistance = 100000;
         std::vector<Item> items = getItemsFromCurrCity(currentCity, allItems);
         for (int toCity: visitedCities) {
-            //if no items then evaluate distance
             if (items.size() == 0) {
                 float distance = cities[currentCity][toCity];
                 if (distance < bestDistance) {
@@ -41,14 +42,15 @@ GreedySearch::evaluateGreedy(int startCity, std::vector<std::vector<float>> citi
                     if (g > bestResult) {
                         bestResult = g;
                         currentCity = toCity;
-                        indexPickedItem = j;
+                        indexPickedItem = items[j].getIdItem();
+                        currWeight += items[j].getWeight();
                     }
                 }
             }
-
         }
 //        knapsackResult.push_back(std::to_string(currentCity) + " " + std::to_string(indexPickedItem));
-        knapsackResult.push_back(std::make_pair(currentCity, indexPickedItem));
+        if (indexPickedItem == -1) indexPickedItem = getBestIfExist(actualCity, knapsack, allItems, currWeight);
+        knapsackResult.push_back(std::make_pair(actualCity, indexPickedItem));
     }
     citiesResult.push_back(startCity);
     std::pair<std::vector<int>, std::vector<int>> result;
@@ -79,9 +81,16 @@ std::vector<int> GreedySearch::repairKnapsack(std::vector<std::pair<int, int>> k
             }
         }
         if (!found)
-            normal.push_back(0);
+            normal.push_back(-1);
     }
     return normal;
 }
 
-
+int GreedySearch::getBestIfExist(int city, Knapsack knapsack, std::vector<Item> allItems, int currWeight) {
+    std::vector<Item> items = getItemsFromCurrCity(city, allItems);
+    for (int j = 0; j < items.size(); ++j) {
+        if (knapsack.getMaxWeight() < currWeight + items[j].getWeight())
+            return items[j].getIdItem();
+    }
+    return 0;
+}

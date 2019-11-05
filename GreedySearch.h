@@ -23,5 +23,7 @@ public:
                    Knapsack knapsack);
 
     std::vector<int> repairKnapsack(std::vector<std::pair<int, int>> knapsack, int size);
+
+    int getBestIfExist(int city, Knapsack knapsack, std::vector<Item> allItems, int currWeight);
 };
 #endif //UNTITLED1_GREEDYSEARCH_H
