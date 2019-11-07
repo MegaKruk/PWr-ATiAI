@@ -196,7 +196,9 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 				}
 			}
 			else
+			{
 				std::swap(calcPath[i], calcPath[j]);
+			}
 		}
 	}
 	std::cout << "\nProfit:\t" << bestProfit << std::endl;

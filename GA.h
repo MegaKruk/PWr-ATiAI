@@ -12,16 +12,20 @@
 #include "Knapsack.h"
 #include "Item.h"
 
-class SA
+class GA
 {
 private:
 	std::vector<int> calcPath;
 	std::vector<int> stolenItemsList;
+	int popSize;
+	float crossRatio;
+	float mutRatio;
+	int noOfGenerations;
 
 public:
-	SA();
-	~SA();
-	
+	GA();
+	~GA();
+
 	std::vector<int> pathInit(int noOfCities);
 	std::vector<int> itemsInit(int noOfItems, Knapsack& knapsack, std::vector<Item> &valuableItemsMatrix);
 
@@ -31,7 +35,7 @@ public:
 						  std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
 						  Knapsack& knapsack);  
 
-	int solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
+	int solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
 				 std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
 				 Knapsack& knapsack); 
 

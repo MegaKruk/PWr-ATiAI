@@ -4,6 +4,7 @@
 #include "Knapsack.h"
 #include "Item.h"
 #include "SA.h"
+#include "GA.h"
 
 int TTP::start()
 {
@@ -22,7 +23,7 @@ int TTP::initTTP()
 		std::cout << "\n1 - Load data";
 		std::cout << "\n2 - Test Greedy Algorithm";
 		std::cout << "\n3 - Test Simulated Annealing";
-		std::cout << "\n4 - Test Genetic Algorithm (NOT YET READY)";
+		std::cout << "\n4 - Test Genetic Algorithm";
 		std::cout << "\n5 - Make measurements for Greedy Algorithm (NOT YET READY)";
 		std::cout << "\n6 - Make measurements for Simulated Annealing (NOT YET READY)";
 		std::cout << "\n7 - Make measurements for Genetic Algorithm (NOT YET READY)";
@@ -208,6 +209,13 @@ int TTP::initTTP()
 		case 4:
 		{
 			// test ga
+			GA mySolverGA;
+			std::vector<int> firstPath = mySolverGA.pathInit(noOfCities);
+			std::vector<int> items = mySolverGA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+
+			timer->point1 = std::chrono::high_resolution_clock::now();
+			mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, firstPath, items, noOfCities, noOfItems, knapsack);
+			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			break;
 		}
 		case 5:
