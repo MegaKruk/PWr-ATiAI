@@ -27,6 +27,9 @@ private:
     float weight;
     int assignedCity;
 public:
+    bool operator<(const Item &rhs) const;
+
+public:
     int getIdItem() const;
 
     void setIdItem(int idItem);

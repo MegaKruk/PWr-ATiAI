@@ -10,7 +10,7 @@
 
 int main()
 {
-	srand(time(0));
+//	srand(time(0));
 	TTP *testUnit = new TTP();
 	testUnit->start();
 	delete(testUnit);

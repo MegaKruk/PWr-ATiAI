@@ -2,7 +2,7 @@ PROBLEM NAME: 	berlin52-TTP_trivialized
 KNAPSACK DATA TYPE: bounded strongly corr
 DIMENSION:	4
 NUMBER OF ITEMS: 	6
-CAPACITY OF KNAPSACK: 	30
+CAPACITY OF KNAPSACK: 	3
 MIN SPEED: 	0.1
 MAX SPEED: 	1
 RENTING RATIO: 	0.56
@@ -19,18 +19,3 @@ ITEMS SECTION	(INDEX, PROFIT, WEIGHT, ASSIGNED NODE NUMBER):
 4	20	2	2
 5	30	3	2
 6	20  2	1
-
-
-Adjacancy matrix for cities:
-0       28      16      22
-28      0       16      10
-16      16      0       7
-22      10      7       0
-
-Valuable items (index, profit, weight, assigned city):
-0       100     3       2
-1       40      1       3
-2       40      1       0
-3       20      2       1
-4       30      3       1
-5       20      2       0

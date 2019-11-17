@@ -22,8 +22,6 @@ public:
     evaluateGreedy(int startCity, std::vector<std::vector<float>> cities, std::vector<Item> allItems,
                    Knapsack knapsack);
 
-    std::vector<int> repairKnapsack(std::vector<std::pair<int, int>> knapsack, int size);
-
-    int getBestIfExist(int city, Knapsack knapsack, std::vector<Item> allItems, int currWeight);
+    std::vector<int> pickingPlan(std::vector<Item> allItems, Knapsack knapsack);
 };
 #endif //UNTITLED1_GREEDYSEARCH_H

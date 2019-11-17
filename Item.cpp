@@ -43,3 +43,7 @@ int Item::getIdItem() const {
 void Item::setIdItem(int idItem) {
     id_item = idItem;
 }
+
+bool Item::operator<(const Item &rhs) const {
+    return profit/weight > rhs.profit/rhs.weight;
+}
