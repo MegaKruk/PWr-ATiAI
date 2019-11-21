@@ -209,6 +209,7 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 		std::cout << bestPath[i] << "\t";
 	}
 
+	std::sort (bestItems.begin(), bestItems.end());
 	std::cout << std::endl << "Items:\t";
 	for (int i = 0; i < bestItems.size(); i++)
 	{

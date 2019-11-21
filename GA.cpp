@@ -17,31 +17,38 @@ std::vector<int> GA::pathInit(int noOfCities)
 	return calcPath;
 }
 
-std::vector<int> GA::itemsInit(int noOfItems, Knapsack& knapsack, std::vector<Item> &valuableItemsMatrix)
+std::vector<bool> GA::itemsInit(int noOfItems, Knapsack& knapsack, std::vector<Item> &valuableItemsMatrix)
 {
 	knapsack.setCurrWeight(0);
-	std::vector<int> stolenItemsList;
+	std::vector<bool> stolenItemsList;
 	stolenItemsList.resize(noOfItems);
 	for (int i = 0; i < noOfItems; i++)
 	{
-		stolenItemsList[i] = i;
+		stolenItemsList[i] = true;
 	}
 	while(calculateWeight(valuableItemsMatrix, stolenItemsList, stolenItemsList.size()) > knapsack.getMaxWeight())
 	{
-		std::swap(stolenItemsList[rand() % stolenItemsList.size()], stolenItemsList.back());
-		stolenItemsList.pop_back();
+		//std::swap(stolenItemsList[rand() % stolenItemsList.size()], stolenItemsList.back());
+		//stolenItemsList.pop_back();
+		int temp = rand() % stolenItemsList.size();
+		stolenItemsList[temp] = false;
+		// cout for debug
+		//std::cout << "\n Dropped item[" << temp << "]\n";
 	}
 	return stolenItemsList;
 }
 
-float GA::calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList, int noOfItems)
+float GA::calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<bool> &stolenItemsList, int noOfItems)
 {
 	float calcWeight = 0;
 	for (int i = 0; i < stolenItemsList.size(); i++)
 	{
-		calcWeight += valuableItemsMatrix[stolenItemsList[i]].getWeight();
-		// couts for debug
-		//std::cout << "\nWeight of " <<  i << " is\t" << valuableItemsMatrix[stolenItemsList[i]].getWeight() << std::endl;
+		if (stolenItemsList[i] == true)
+		{
+			calcWeight += valuableItemsMatrix[i].getWeight();
+			// couts for debug
+			//std::cout << "\nWeight of " << i << " is\t" << valuableItemsMatrix[i].getWeight() << std::endl;
+		}
 	}
 	//std::cout << calcWeight;
 	return calcWeight;
@@ -64,7 +71,7 @@ float GA::calculateDist(std::vector<std::vector<float>> &adjacancyMatrix, std::v
 }
 
 float GA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, 
-						  std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
+						  std::vector<int> &calcPath, std::vector<bool> &stolenItemsList, int noOfCities, int noOfItems, 
 						  Knapsack& knapsack)
 {
 	knapsack.setCurrWeight(0);
@@ -76,11 +83,11 @@ float GA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std:
 	{
 		for(int j = 0; j < stolenItemsList.size(); j++)
 		{
-			if(calcPath[i] == valuableItemsMatrix[stolenItemsList[j]].getAssignedCity())
+			if(calcPath[i] == valuableItemsMatrix[j].getAssignedCity() && stolenItemsList[j] == true)
 			{
-				knapsack.increaseCurrWeight(valuableItemsMatrix[stolenItemsList[j]].getWeight());
+				knapsack.increaseCurrWeight(valuableItemsMatrix[j].getWeight());
 				knapsack.setCurrSpeed();
-				calcProfit += valuableItemsMatrix[stolenItemsList[j]].getProfit();
+				calcProfit += valuableItemsMatrix[j].getProfit();
 			}
 		}
 		int matrixX = calcPath[i];
@@ -93,7 +100,7 @@ float GA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std:
 }
 
 int GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, std::vector<int> &calcPath, 
-				 std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, Knapsack& knapsack)
+				 std::vector<bool> &stolenItemsList, int noOfCities, int noOfItems, Knapsack& knapsack)
 {
 	// 1. Initialize population[popSize] where member is set of items and a path
 	// 2. Assign them a fitness (only profit matters, it describes everything). 
@@ -105,6 +112,7 @@ int GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 	// (swap 2 random cities, drop 1 item, take 1 item [drop more if we went over max weight])
 	// 8. Repeat until new population[popSize] is filled with children
 	// 9. Repeat 2-8 until we reach max number of generations (or until bored).
+	
 	return 0;
 }
 
@@ -123,9 +131,9 @@ std::vector<int> GA::getCalcPath(void)
 	return std::vector<int>(calcPath);
 }
 
-std::vector<int> GA::getStolenItemsList(void)
+std::vector<bool> GA::getStolenItemsList(void)
 {
-	return std::vector<int>(stolenItemsList);
+	return std::vector<bool>(stolenItemsList);
 }
 
 GA::GA()

@@ -211,7 +211,7 @@ int TTP::initTTP()
 			// test ga
 			GA mySolverGA;
 			std::vector<int> firstPath = mySolverGA.pathInit(noOfCities);
-			std::vector<int> items = mySolverGA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+			std::vector<bool> items = mySolverGA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
 
 			timer->point1 = std::chrono::high_resolution_clock::now();
 			mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, firstPath, items, noOfCities, noOfItems, knapsack);
