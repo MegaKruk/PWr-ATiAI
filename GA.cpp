@@ -126,14 +126,82 @@ double GA::randFraction(void)
 	return randInt(1, 10000) / 10000;
 }
 
-std::vector<int> GA::getCalcPath(void)
+// getters
+std::vector<Item> GA::getItemsFromCurrCity(int currCity, std::vector<Item> allItems) 
+{
+	std::vector<Item> currItems;
+	for (int i = 0; i < allItems.size(); i++) 
+	{
+		if (allItems[i].getAssignedCity() == currCity)
+			currItems.push_back(allItems[i]);
+	}
+	return currItems;
+}
+
+std::vector<int> GA::getCalcPath()
 {
 	return std::vector<int>(calcPath);
 }
 
-std::vector<bool> GA::getStolenItemsList(void)
+std::vector<bool> GA::getStolenItemsList()
 {
 	return std::vector<bool>(stolenItemsList);
+}
+
+std::vector<std::tuple<std::vector<int>, std::vector<bool>>> GA::getParentsPop(void)
+{
+	return std::vector<std::tuple<std::vector<int>, std::vector<bool>>>(parentsPop);
+}
+
+std::vector<std::tuple<std::vector<int>, std::vector<bool>>> GA::getChildrenPop(void)
+{
+	return std::vector<std::tuple<std::vector<int>, std::vector<bool>>>(childrenPop);
+}
+
+std::tuple<std::vector<int>, std::vector<bool>> GA::getPopMember(void)
+{
+	return std::tuple<std::vector<int>, std::vector<bool>>(popMember);
+}
+
+int GA::getPopSize()
+{
+	return popSize;
+}
+
+int GA::getNoOfGenerations()
+{
+	return noOfGenerations;
+}
+
+float GA::getCrossRatio()
+{
+	return crossRatio;
+}
+
+float GA::getMutRatio()
+{
+	return mutRatio;
+}
+
+// setters
+void GA::setMutationRatio(float val)
+{
+	mutRatio = val;
+}
+
+void GA::setCrossoverRatio(float val)
+{
+	crossRatio = val;
+}
+
+void GA::setPopSize(int val)
+{
+	popSize = val;
+}
+
+void GA::setNoOfGenerations(int val)
+{
+	noOfGenerations = val;
 }
 
 GA::GA()

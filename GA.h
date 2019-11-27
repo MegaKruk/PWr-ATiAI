@@ -17,11 +17,14 @@ class GA
 private:
 	std::vector<int> calcPath;
 	std::vector<bool> stolenItemsList;
-	std::tuple<std::vector<int>, std::vector<int>> popMember;
+	std::tuple<std::vector<int>, std::vector<bool>> popMember;
+	std::vector<std::tuple<std::vector<int>, std::vector<bool>>> childrenPop;
+	std::vector<std::tuple<std::vector<int>, std::vector<bool>>> parentsPop;
+	
 	int popSize;
+	int noOfGenerations;
 	float crossRatio;
 	float mutRatio;
-	int noOfGenerations;
 
 public:
 	GA();
@@ -41,10 +44,22 @@ public:
 				 Knapsack& knapsack); 
 
 	int randInt(int l, int r);
-	double randFraction(void);
+	double randFraction();
 
 	std::vector<Item> getItemsFromCurrCity(int currCity, std::vector<Item> items);
 	std::vector<int> getCalcPath();
 	std::vector<bool> getStolenItemsList();
+	std::vector<std::tuple<std::vector<int>, std::vector<bool>>> getParentsPop();
+	std::vector<std::tuple<std::vector<int>, std::vector<bool>>> getChildrenPop();
+	std::tuple<std::vector<int>, std::vector<bool>> getPopMember();
+	int getPopSize();
+	int getNoOfGenerations();
+	float getCrossRatio();
+	float getMutRatio();
+
+	void setMutationRatio(float val);
+	void setCrossoverRatio(float val);
+	void setPopSize(int val);
+	void setNoOfGenerations(int val);
 };
 
