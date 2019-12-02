@@ -17,28 +17,28 @@ std::vector<int> GA::pathInit(int noOfCities)
 	return calcPath;
 }
 
-std::vector<bool> GA::itemsInit(int noOfItems, Knapsack& knapsack, std::vector<Item> &valuableItemsMatrix)
+std::vector<int> GA::itemsInit(int noOfItems, Knapsack& knapsack, std::vector<Item> &valuableItemsMatrix)
 {
 	knapsack.setCurrWeight(0);
-	std::vector<bool> stolenItemsList;
+	std::vector<int> stolenItemsList;
 	stolenItemsList.resize(noOfItems);
 	for (int i = 0; i < noOfItems; i++)
 	{
-		stolenItemsList[i] = true;
+		stolenItemsList[i] = 1;
 	}
 	while(calculateWeight(valuableItemsMatrix, stolenItemsList, stolenItemsList.size()) > knapsack.getMaxWeight())
 	{
 		//std::swap(stolenItemsList[rand() % stolenItemsList.size()], stolenItemsList.back());
 		//stolenItemsList.pop_back();
 		int temp = rand() % stolenItemsList.size();
-		stolenItemsList[temp] = false;
+		stolenItemsList[temp] = 0;
 		// cout for debug
 		//std::cout << "\n Dropped item[" << temp << "]\n";
 	}
 	return stolenItemsList;
 }
 
-float GA::calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<bool> &stolenItemsList, int noOfItems)
+float GA::calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList, int noOfItems)
 {
 	float calcWeight = 0;
 	for (int i = 0; i < stolenItemsList.size(); i++)
@@ -71,7 +71,7 @@ float GA::calculateDist(std::vector<std::vector<float>> &adjacancyMatrix, std::v
 }
 
 float GA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, 
-						  std::vector<int> &calcPath, std::vector<bool> &stolenItemsList, int noOfCities, int noOfItems, 
+						  std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
 						  Knapsack& knapsack)
 {
 	knapsack.setCurrWeight(0);
@@ -99,8 +99,8 @@ float GA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std:
 	return calcProfit;
 }
 
-int GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, std::vector<int> &calcPath, 
-				 std::vector<bool> &stolenItemsList, int noOfCities, int noOfItems, Knapsack& knapsack)
+float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, std::vector<int> &calcPath, 
+				   std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, Knapsack& knapsack)
 {
 	// 1. Initialize population[popSize] where member is set of items and a path
 	// 2. Assign them a fitness (only profit matters, it describes everything). 
@@ -113,7 +113,280 @@ int GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 	// 8. Repeat until new population[popSize] is filled with children
 	// 9. Repeat 2-8 until we reach max number of generations (or until bored).
 	
-	return 0;
+	// best <- null
+	float bestProfit = std::numeric_limits<float>::max();
+	std::vector<int> bestPath;
+	bestPath.clear();
+	bestPath.resize(noOfCities + 1);
+	int iterations = 0;
+
+	do
+	{
+		//for observing population
+		/*for (int k = 0; k < parentsPop.size(); k++)
+		{
+			for (int l = 0; l < parentsPop[k].size(); l++)
+			{
+				std::cout << parentsPop[k][l] << "\t";
+			}
+			std::cout << endl;
+		}*/
+
+		// Assess fitness of every P(i)
+		for (int i = 0; i < popSize; i++)
+		{
+			int currProfit = calculateDist(adjacancyMatrix, parentsPop[i], noOfCities);
+			if (currProfit < bestProfit)
+			{
+				bestProfit = currProfit;
+				//for (int j = 0; j < noOfCities + 1; j++)
+				bestPath = parentsPop[i];
+			}
+		}
+		childrenPop.clear();
+		childrenPop.resize(0);
+
+		for (int k = 0; k < popSize / 2; k++)
+		{
+			// tournament
+			int bestParent = 0;
+			int currParent;
+			int secondParent = 0;
+			std::vector<int> parentA;
+			parentA.resize(noOfCities + 1);
+			std::vector<int> parentB;
+			parentB.resize(noOfCities + 1);
+			std::vector<int> contestantA;
+			contestantA.resize(noOfCities + 1);
+			std::vector<int> contestantB;
+			contestantB.resize(noOfCities + 1);
+
+			int randA = randInt(0, popSize - 1);
+			//for (int i = 0; i < noOfCities + 1; i++)
+			contestantA = parentsPop[randA];
+
+			int randB = randInt(0, popSize - 1);
+			while (randA == randB)
+				randB = randInt(0, popSize - 1);
+			//for (int i = 0; i < noOfCities + 1; i++)
+			contestantB = parentsPop[randB];
+
+			int distA = 0;
+			int distB = 0;
+			for (int i = 0; i < noOfCities; i++)
+			{
+				int a = contestantA[i];
+				int b = contestantA[i + 1];
+				distA += adjacancyMatrix[a][b % (noOfCities)];
+			}
+			for (int i = 0; i < noOfCities; i++)
+			{
+				int a = contestantB[i];
+				int b = contestantB[i + 1];
+				distB += adjacancyMatrix[a][b % (noOfCities)];
+			}
+			if (distA < distB)
+			{
+				for (int j = 0; j < noOfCities + 1; j++)
+					parentA[j] = contestantA[j];
+			}
+			else
+			{
+				for (int j = 0; j < noOfCities + 1; j++)
+					parentA[j] = contestantB[j];
+			}
+
+			randA = randInt(0, popSize - 1);
+			//for (int i = 0; i < noOfCities + 1; i++)
+			contestantA = parentsPop[randA];
+
+			randB = randInt(0, popSize - 1);
+			while (randA == randB)
+				randB = randInt(0, popSize - 1);
+			//for (int i = 0; i < noOfCities + 1; i++)
+			contestantA = parentsPop[randB];
+
+			distA = 0;
+			distB = 0;
+			for (int i = 0; i < noOfCities; i++)
+			{
+				int a = contestantA[i];
+				int b = contestantA[i + 1];
+				distA += adjacancyMatrix[a][b % (noOfCities)];
+			}
+			for (int i = 0; i < noOfCities; i++)
+			{
+				int a = contestantB[i];
+				int b = contestantB[i + 1];
+				distB += adjacancyMatrix[a][b % (noOfCities)];
+			}
+			if (distA < distB)
+			{
+				for (int j = 0; j < noOfCities + 1; j++)
+					parentB[j] = contestantA[j];
+			}
+			else
+			{
+				for (int j = 0; j < noOfCities + 1; j++)
+					parentB[j] = contestantB[j];
+			}
+
+			// choose random place to cut parent
+			int randCut = randInt(3, noOfCities - 2);
+
+			std::vector<int> firstHalfA;
+			firstHalfA.resize(randCut);
+			for (int i = 0; i < randCut; i++)
+				firstHalfA[i] = parentA[i];
+
+			std::vector<int> firstHalfB;
+			firstHalfB.resize(randCut);
+			for (int i = 0; i < randCut; i++)
+				firstHalfB[i] = parentB[i];
+
+			// breed with chance to cross and to mutate
+			std::vector<int> childA;
+			std::vector<int> childB;
+			childA.resize(noOfCities + 1);
+			childB.resize(noOfCities + 1);
+
+			float diceroll = randInt(1, 10000);
+			diceroll = diceroll / 10000;
+			
+			// crossover
+			if (diceroll < crossRatio / 100)
+			{
+				// Copy elements from first parent up to cut point
+				for (int i = 0; i < randCut; i++)
+					childA[i] = firstHalfA[i];
+
+				// Add remaining elements from second parent to child while preserving order
+				int remaining = noOfCities - randCut;	
+				int count = 0;
+				for (int i = 0; i < noOfCities; i++)	
+				{
+					bool found = false;
+					for (int j = 0; j <= randCut; j++) 
+					{
+						// If the city is in the child, exit this loop
+						if (childA[j] == parentB[i])
+						{
+							found = true;
+							break;
+						}
+					}
+
+					// If the city was not found in the child, add it to the child
+					if (!found)
+					{
+						childA[randCut + count] = parentB[i];
+						count++;
+					}
+
+					// Stop once all of the cities have been added
+					if (count == remaining)
+						break;
+				}
+
+				// Copy elements from second parent up to cut point
+				for (int i = 0; i < randCut; i++)
+					childB[i] = firstHalfB[i];
+
+				// Add remaining elements from first parent to child while preserving order
+				int remainingB = noOfCities - randCut;
+				int countB = 0;
+				for (int i = 0; i < noOfCities; i++)
+				{
+					bool foundB = false;
+					for (int j = 0; j <= randCut; j++)
+					{
+						// If the city is in the child, exit this loop
+						if (childB[j] == parentA[i])
+						{
+							foundB = true;
+							break;
+						}
+					}
+
+					// If the city was not found in the child, add it to the child
+					if (!foundB)
+					{
+						
+						childB[randCut + countB] = parentA[i];
+						countB++;
+					}
+
+					// Stop once all of the cities have been added
+					if (countB == remainingB)
+						break;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < noOfCities + 1; i++)
+					childA[i] = parentA[i];
+				for (int i = 0; i < noOfCities + 1; i++)
+					childB[i] = parentB[i];
+			}
+
+			// mutation
+			double diceroll2 = randInt(1, 10000);
+			diceroll2 = diceroll2 / 10000;
+			if (diceroll2 < (mutRatio / 1000.0))
+			{
+				int x = randInt(1, noOfCities - 1);
+				int y = randInt(1, noOfCities - 1);
+				std::swap(childA[x], childA[y]);
+
+				int z = randInt(1, noOfCities - 1);
+				int t = randInt(1, noOfCities - 1);
+				std::swap(childB[z], childB[t]);
+			}
+
+			// Q <- Qa, Qb
+			childrenPop.push_back(childA);
+			childrenPop.push_back(childB);
+
+			parentA.clear();
+			parentA.resize(0);
+			parentB.clear();
+			parentB.resize(0);
+			firstHalfA.clear();
+			firstHalfA.resize(0);
+			firstHalfB.clear();
+			firstHalfB.resize(0);
+			childA.clear();
+			childA.resize(0);
+			childB.clear();
+			childB.resize(0);
+		}
+
+		// P <- Q
+		parentsPop.clear();
+		parentsPop.resize(0);
+		parentsPop.resize(popSize);
+		for (int v = 0; v < popSize; ++v)
+			parentsPop[v].resize(noOfCities + 1);
+
+		for (int i = 0; i < popSize; i++)
+			parentsPop[i] = childrenPop[i];
+		iterations++;
+		//sqrt(noOfCities) * 4000
+	} while (iterations < sqrt(noOfCities) * 5000);
+
+	std::cout << std::endl << "Profit:\t" << bestProfit << std::endl;
+	std::cout << "Path:\t";
+	for (int i = 0; i < noOfCities + 1; i++)
+	{
+		std::cout << bestPath[i] << "\t";
+	}
+	bestPath.clear();
+	bestPath.resize(0);
+	childrenPop.clear();
+	childrenPop.resize(0);
+	parentsPop.clear();
+	parentsPop.resize(0);
+	return bestProfit;
 }
 
 int GA::randInt(int l, int r)
@@ -143,24 +416,24 @@ std::vector<int> GA::getCalcPath()
 	return std::vector<int>(calcPath);
 }
 
-std::vector<bool> GA::getStolenItemsList()
-{
-	return std::vector<bool>(stolenItemsList);
+std::vector<int> GA::getStolenItemsList()
+{	
+	return std::vector<int>(stolenItemsList);
 }
 
-std::vector<std::tuple<std::vector<int>, std::vector<bool>>> GA::getParentsPop(void)
+std::vector<std::vector<int>> GA::getParentsPop(void)
 {
-	return std::vector<std::tuple<std::vector<int>, std::vector<bool>>>(parentsPop);
+	return std::vector<std::vector<int>>(parentsPop);
 }
 
-std::vector<std::tuple<std::vector<int>, std::vector<bool>>> GA::getChildrenPop(void)
+std::vector<std::vector<int>> GA::getChildrenPop(void)
 {
-	return std::vector<std::tuple<std::vector<int>, std::vector<bool>>>(childrenPop);
+	return std::vector<std::vector<int>>(childrenPop);
 }
 
-std::tuple<std::vector<int>, std::vector<bool>> GA::getPopMember(void)
+std::vector<int> GA::getPopMember(void)
 {
-	return std::tuple<std::vector<int>, std::vector<bool>>(popMember);
+	return std::vector<int>(popMember);
 }
 
 int GA::getPopSize()
