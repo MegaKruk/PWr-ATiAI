@@ -43,10 +43,30 @@ std::vector<int> GreedySearch::pickingPlan(std::vector<Item> allItems, Knapsack 
     std::sort(allItems.begin(), allItems.end());
     int i = 0;
     int currWeight = 0;
+    float currProfit = 0;
     while (currWeight + allItems[i].getWeight() < knapsack.getMaxWeight()) {
         currWeight += allItems[i].getWeight();
         pickingVector.push_back(allItems[i].getIdItem());
+        currProfit += allItems[i].getProfit();
         i++;
     }
+    weight = currWeight;
+    profit = (int) currProfit;
     return pickingVector;
+}
+
+int GreedySearch::getWeight() const {
+    return weight;
+}
+
+void GreedySearch::setWeight(int weight) {
+    GreedySearch::weight = weight;
+}
+
+float GreedySearch::getProfit() const {
+    return profit;
+}
+
+void GreedySearch::setProfit(float profit) {
+    GreedySearch::profit = profit;
 }

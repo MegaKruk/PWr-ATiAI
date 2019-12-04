@@ -185,11 +185,16 @@ int TTP::initTTP()
 		{
 		    GreedySearch greedySearch;
 		    std::pair<std::vector<int>, std::vector<int>> result = greedySearch.evaluateGreedy(0, adjacancyMatrix, valuableItemsMatrix, knapsack);
-            for (auto i = result.first.begin(); i != result.first.end(); ++i)
-                std::cout << *i << ' ';
+            std::cout << "Profit: " << greedySearch.getProfit() << std::endl;
+            std::cout << "Weight: " << greedySearch.getWeight() << " / " << knapsack.getMaxWeight();
             std::cout << std::endl;
+            std::cout << "Path:\t";
+            for (auto i = result.first.begin(); i != result.first.end(); ++i)
+                std::cout << *i << "\t";
+            std::cout << std::endl;
+            std::cout << "Items:\t";
             for (auto i = result.second.begin(); i != result.second.end(); ++i)
-                std::cout << *i << ' ';
+                std::cout << *i << "\t";
 			break;
 		}
 		case 3:

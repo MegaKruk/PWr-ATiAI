@@ -13,6 +13,17 @@
 class GreedySearch
 {
 private:
+    float profit;
+    int weight;
+public:
+    int getWeight() const;
+
+    void setWeight(int weight);
+
+public:
+    float getProfit() const;
+
+    void setProfit(float profit);
 
 public:
 
@@ -23,5 +34,6 @@ public:
                    Knapsack knapsack);
 
     std::vector<int> pickingPlan(std::vector<Item> allItems, Knapsack knapsack);
+
 };
 #endif //UNTITLED1_GREEDYSEARCH_H
