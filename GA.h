@@ -21,10 +21,10 @@ private:
 	std::vector<std::vector<int>> childrenPop;
 	std::vector<std::vector<int>> parentsPop;
 
-	int popSize;
-	int noOfGenerations;
-	float crossRatio;
-	float mutRatio;
+	int popSize = 1000;
+	int noOfGenerations = 10000;
+	float crossRatio = 1;
+	float mutRatio = 60;
 
 public:
 	GA();
@@ -32,6 +32,7 @@ public:
 
 	std::vector<int> pathInit(int noOfCities);
 	std::vector<int> itemsInit(int noOfItems, Knapsack& knapsack, std::vector<Item> &valuableItemsMatrix);
+	int popInit(int noOfCities);
 
 	float calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList, int noOfItems);
 	float calculateDist(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities);
@@ -40,8 +41,7 @@ public:
 						  Knapsack& knapsack);  
 
 	float solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
-				   std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
-				   Knapsack& knapsack); 
+				   int noOfCities, int noOfItems, Knapsack& knapsack); 
 
 	int randInt(int l, int r);
 	double randFraction();

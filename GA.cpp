@@ -15,6 +15,23 @@ std::vector<int> GA::pathInit(int noOfCities)
 			calcPath[i + 1] = calcPath[0];
 	}
 	return calcPath;
+	/*for (int i = 0; i < noOfCities; i++)
+	{
+		calcPath[i] = i;
+		if (i == noOfCities - 1)
+			calcPath[i + 1] = calcPath[0];
+	}
+
+	for (int j = 0; j < popSize; j++)
+	{
+		for (int h = 0; h < 1024 * noOfCities; h++)
+		{
+			int x = randInt(1, noOfCities - 1);
+			int y = randInt(1, noOfCities - 1);
+			std::swap(calcPath[x], calcPath[y]);
+		}
+	}
+	return calcPath;*/
 }
 
 std::vector<int> GA::itemsInit(int noOfItems, Knapsack& knapsack, std::vector<Item> &valuableItemsMatrix)
@@ -37,6 +54,30 @@ std::vector<int> GA::itemsInit(int noOfItems, Knapsack& knapsack, std::vector<It
 	}
 	return stolenItemsList;
 }
+
+int GA::popInit(int noOfCities)
+{
+	parentsPop.clear();
+	parentsPop.resize(0);
+	parentsPop.resize(popSize);
+	for (int i = 0; i < popSize; ++i)
+		parentsPop[i].resize(noOfCities + 1);
+
+	popMember = pathInit(noOfCities);
+
+	for (int j = 0; j < popSize; j++)
+	{
+		for (int h = 0; h < 1000 * noOfCities; h++)
+		{
+			int x = randInt(1, noOfCities - 1);
+			int y = randInt(1, noOfCities - 1);
+			std::swap(popMember[x], popMember[y]);
+		}
+		parentsPop[j] = popMember;
+	}
+	return 0;
+}
+
 
 float GA::calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList, int noOfItems)
 {
@@ -99,8 +140,8 @@ float GA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std:
 	return calcProfit;
 }
 
-float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, std::vector<int> &calcPath, 
-				   std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, Knapsack& knapsack)
+float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
+				   int noOfCities, int noOfItems, Knapsack& knapsack)
 {
 	// 1. Initialize population[popSize] where member is set of items and a path
 	// 2. Assign them a fitness (only profit matters, it describes everything). 
@@ -129,7 +170,7 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 			{
 				std::cout << parentsPop[k][l] << "\t";
 			}
-			std::cout << endl;
+			std::cout << std::endl;
 		}*/
 
 		// Assess fitness of every P(i)
@@ -332,7 +373,7 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 			// mutation
 			double diceroll2 = randInt(1, 10000);
 			diceroll2 = diceroll2 / 10000;
-			if (diceroll2 < (mutRatio / 1000.0))
+			if (diceroll2 < (mutRatio / 100))
 			{
 				int x = randInt(1, noOfCities - 1);
 				int y = randInt(1, noOfCities - 1);
@@ -372,9 +413,10 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 			parentsPop[i] = childrenPop[i];
 		iterations++;
 		//sqrt(noOfCities) * 4000
-	} while (iterations < sqrt(noOfCities) * 5000);
+	} while (iterations < noOfGenerations);
 
 	std::cout << std::endl << "Profit:\t" << bestProfit << std::endl;
+	//std::cout << "Weight:\t" << bestWeight << " / " << knapsack.getMaxWeight() << std::endl;
 	std::cout << "Path:\t";
 	for (int i = 0; i < noOfCities + 1; i++)
 	{

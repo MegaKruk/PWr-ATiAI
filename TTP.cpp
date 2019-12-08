@@ -210,11 +210,11 @@ int TTP::initTTP()
 		{
 			// test ga
 			GA mySolverGA;
-			std::vector<int> firstPath = mySolverGA.pathInit(noOfCities);
-			std::vector<int> items = mySolverGA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
-
+			//std::vector<int> firstPath = mySolverGA.pathInit(noOfCities);
+			//std::vector<int> items = mySolverGA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+			mySolverGA.popInit(noOfCities);
 			timer->point1 = std::chrono::high_resolution_clock::now();
-			mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, firstPath, items, noOfCities, noOfItems, knapsack);
+			mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
 			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			break;
 		}
