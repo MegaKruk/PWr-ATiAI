@@ -198,10 +198,10 @@ int TTP::initTTP()
 			// test sa
 			SA mySolverSA;
 			std::vector<int> firstPath = mySolverSA.pathInit(noOfCities);
-			std::vector<int> items = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+			std::vector<int> firstItems = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
 
 			timer->point1 = std::chrono::high_resolution_clock::now();
-			mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, items, noOfCities, noOfItems, knapsack);
+			mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, firstItems, noOfCities, noOfItems, knapsack);
 			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			
 			break;
@@ -212,7 +212,7 @@ int TTP::initTTP()
 			GA mySolverGA;
 			//std::vector<int> firstPath = mySolverGA.pathInit(noOfCities);
 			//std::vector<int> items = mySolverGA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
-			mySolverGA.popInit(noOfCities);
+			mySolverGA.popInit(noOfCities, noOfItems, knapsack, valuableItemsMatrix);
 			timer->point1 = std::chrono::high_resolution_clock::now();
 			mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
 			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";

@@ -8,11 +8,19 @@ std::vector<int> GA::pathInit(int noOfCities)
 {
 	calcPath.clear();
 	calcPath.resize(noOfCities + 1);
+
 	for (int i = 0; i < noOfCities; i++)
 	{
 		calcPath[i] = i;
 		if (i == noOfCities - 1)
 			calcPath[i + 1] = calcPath[0];
+	}
+
+	for (int i = 0; i < 100 * noOfCities; i++)
+	{
+		int x = randInt(1, noOfCities - 1);
+		int y = randInt(1, noOfCities - 1);
+		std::swap(calcPath[x], calcPath[y]);
 	}
 
 	/*for (int l = 0; l < calcPath.size(); l++)
@@ -62,7 +70,7 @@ std::vector<int> GA::itemsInit(int noOfItems, Knapsack &knapsack, std::vector<It
 	return stolenItemsList;
 }
 
-int GA::popInit(int noOfCities)
+int GA::popInit(int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<Item> &valuableItemsMatrix)
 {
 	parentsPop.clear();
 	parentsPop.resize(0);
@@ -70,21 +78,16 @@ int GA::popInit(int noOfCities)
 	for (int i = 0; i < popSize; ++i)
 		parentsPop[i].resize(noOfCities + 1);
 
-	popMember = pathInit(noOfCities);
-
-	for (int j = 0; j < popSize; j++)
+	for (int i = 0; i < popSize; i++)
 	{
-		for (int h = 0; h < 1000 * noOfCities; h++)
-		{
-			int x = randInt(1, noOfCities - 1);
-			int y = randInt(1, noOfCities - 1);
-			std::swap(popMember[x], popMember[y]);
-		}
-		parentsPop[j] = popMember;
+		std::vector<int> initPath = pathInit(noOfCities);
+		std::vector<int> initItems = itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+		parentsPop[i] = initPath;
+		parentsPop[i].insert(parentsPop[i].end(), initItems.begin(), initItems.end());
 	}
 
 	//for observing population
-	/*for (int k = 0; k < parentsPop.size(); k++)
+	for (int k = 0; k < parentsPop.size(); k++)
 	{
 		std::cout << k << ": ";
 		for (int l = 0; l < parentsPop[k].size(); l++)
@@ -92,7 +95,7 @@ int GA::popInit(int noOfCities)
 			std::cout << parentsPop[k][l] << "\t";
 		}
 		std::cout << std::endl;
-	}*/
+	}
 	return 0;
 }
 
@@ -415,7 +418,6 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 
 		// P <- Q
 		parentsPop.clear();
-		parentsPop.resize(0);
 		parentsPop.resize(popSize);
 		for (int v = 0; v < popSize; ++v)
 			parentsPop[v].resize(noOfCities + 1);
@@ -482,11 +484,6 @@ std::vector<std::vector<int>> GA::getParentsPop(void)
 std::vector<std::vector<int>> GA::getChildrenPop(void)
 {
 	return std::vector<std::vector<int>>(childrenPop);
-}
-
-std::vector<int> GA::getPopMember(void)
-{
-	return std::vector<int>(popMember);
 }
 
 int GA::getPopSize()

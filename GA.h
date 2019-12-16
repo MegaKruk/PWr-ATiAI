@@ -17,7 +17,6 @@ class GA
 private:
 	std::vector<int> calcPath;
 	std::vector<int> stolenItemsList;
-	std::vector<int> popMember;
 	std::vector<std::vector<int>> childrenPop;
 	std::vector<std::vector<int>> parentsPop;
 	std::vector<int> contestantA;
@@ -38,7 +37,7 @@ public:
 
 	std::vector<int> pathInit(int noOfCities);
 	std::vector<int> itemsInit(int noOfItems, Knapsack &knapsack, std::vector<Item> &valuableItemsMatrix);
-	int popInit(int noOfCities);
+	int popInit(int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<Item> &valuableItemsMatrix);
 
 	float calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList, int noOfItems);
 	float calculateDist(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities);
@@ -63,7 +62,6 @@ public:
 	std::vector<int> getStolenItemsList();
 	std::vector<std::vector<int>> getParentsPop();
 	std::vector<std::vector<int>> getChildrenPop();
-	std::vector<int> getPopMember();
 	int getPopSize();
 	int getNoOfGenerations();
 	float getCrossRatio();
