@@ -21,10 +21,10 @@ private:
 	std::vector<std::vector<int>> childrenPop;
 	std::vector<std::vector<int>> parentsPop;
 
-	int popSize = 1000;
-	int noOfGenerations = 10000;
-	float crossRatio = 1;
-	float mutRatio = 60;
+	int popSize = 500;
+	int noOfGenerations = 1000;
+	float crossRatio = 60;
+	float mutRatio = 1;
 
 public:
 	GA();

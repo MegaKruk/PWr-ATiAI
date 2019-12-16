@@ -155,7 +155,7 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 	// 9. Repeat 2-8 until we reach max number of generations (or until bored).
 	
 	// best <- null
-	float bestProfit = std::numeric_limits<float>::max();
+	float bestProfit = std::numeric_limits<float>::min();
 	std::vector<int> bestPath;
 	bestPath.clear();
 	bestPath.resize(noOfCities + 1);
@@ -177,7 +177,7 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		for (int i = 0; i < popSize; i++)
 		{
 			int currProfit = calculateDist(adjacancyMatrix, parentsPop[i], noOfCities);
-			if (currProfit < bestProfit)
+			if (currProfit > bestProfit)
 			{
 				bestProfit = currProfit;
 				//for (int j = 0; j < noOfCities + 1; j++)
@@ -187,9 +187,9 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		childrenPop.clear();
 		childrenPop.resize(0);
 
+		// tournament
 		for (int k = 0; k < popSize / 2; k++)
 		{
-			// tournament
 			int bestParent = 0;
 			int currParent;
 			int secondParent = 0;
@@ -271,32 +271,27 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 				for (int j = 0; j < noOfCities + 1; j++)
 					parentB[j] = contestantB[j];
 			}
-
-			// choose random place to cut parent
-			int randCut = randInt(3, noOfCities - 2);
-
-			std::vector<int> firstHalfA;
-			firstHalfA.resize(randCut);
-			for (int i = 0; i < randCut; i++)
-				firstHalfA[i] = parentA[i];
-
-			std::vector<int> firstHalfB;
-			firstHalfB.resize(randCut);
-			for (int i = 0; i < randCut; i++)
-				firstHalfB[i] = parentB[i];
-
 			// breed with chance to cross and to mutate
 			std::vector<int> childA;
 			std::vector<int> childB;
 			childA.resize(noOfCities + 1);
 			childB.resize(noOfCities + 1);
-
 			float diceroll = randInt(1, 10000);
-			diceroll = diceroll / 10000;
+			diceroll = diceroll / 10000.0;
 			
-			// crossover
-			if (diceroll < crossRatio / 100)
+			// 1-point crossover
+			if (diceroll < crossRatio / 100.0)
 			{
+				// choose random place to cut parent
+				int randCut = randInt(3, noOfCities - 2);
+				std::vector<int> firstHalfA;
+				firstHalfA.resize(randCut);
+				for (int i = 0; i < randCut; i++)
+					firstHalfA[i] = parentA[i];
+				std::vector<int> firstHalfB;
+				firstHalfB.resize(randCut);
+				for (int i = 0; i < randCut; i++)
+					firstHalfB[i] = parentB[i];
 				// Copy elements from first parent up to cut point
 				for (int i = 0; i < randCut; i++)
 					childA[i] = firstHalfA[i];
@@ -316,23 +311,19 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 							break;
 						}
 					}
-
 					// If the city was not found in the child, add it to the child
 					if (!found)
 					{
 						childA[randCut + count] = parentB[i];
 						count++;
 					}
-
 					// Stop once all of the cities have been added
 					if (count == remaining)
 						break;
 				}
-
 				// Copy elements from second parent up to cut point
 				for (int i = 0; i < randCut; i++)
 					childB[i] = firstHalfB[i];
-
 				// Add remaining elements from first parent to child while preserving order
 				int remainingB = noOfCities - randCut;
 				int countB = 0;
@@ -372,8 +363,8 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 
 			// mutation
 			double diceroll2 = randInt(1, 10000);
-			diceroll2 = diceroll2 / 10000;
-			if (diceroll2 < (mutRatio / 100))
+			diceroll2 = diceroll2 / 10000.0;
+			if (diceroll2 < (mutRatio / 100.0))
 			{
 				int x = randInt(1, noOfCities - 1);
 				int y = randInt(1, noOfCities - 1);
@@ -392,10 +383,7 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 			parentA.resize(0);
 			parentB.clear();
 			parentB.resize(0);
-			firstHalfA.clear();
-			firstHalfA.resize(0);
-			firstHalfB.clear();
-			firstHalfB.resize(0);
+
 			childA.clear();
 			childA.resize(0);
 			childB.clear();
