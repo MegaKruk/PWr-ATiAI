@@ -35,7 +35,7 @@ public:
 				 std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
 				 Knapsack& knapsack); 
 
-	int randInt(int l, int r);
+	int randNum(int l, int r);
 	double randFraction(void);
 
 	std::vector<Item> getItemsFromCurrCity(int currCity, std::vector<Item> items);

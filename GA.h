@@ -26,10 +26,10 @@ private:
 	std::vector<int> childA;
 	std::vector<int> childB;
 
-	int popSize = 10;
-	int noOfGenerations = 20;
+	int popSize = 100;
+	int noOfGenerations = 1000;
 	float crossRatio = 60;
-	float mutRatio = 20;
+	float mutRatio = 3;
 
 public:
 	GA();

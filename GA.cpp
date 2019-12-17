@@ -172,25 +172,47 @@ int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 	{
 		//std::cout << "\nCROSSOVER!";
 		// choose random place to cut parent
-		int randCut = randNum(3, noOfCities - 2);
-		std::vector<int> firstHalfA;
-		firstHalfA.resize(randCut);
-		for (int i = 0; i < randCut; i++)
-			firstHalfA[i] = parentA[i];
-		std::vector<int> firstHalfB;
-		firstHalfB.resize(randCut);
-		for (int i = 0; i < randCut; i++)
-			firstHalfB[i] = parentB[i];
+		int randCutPath = randNum(3, noOfCities - 2);
+		int randCutItems = randNum(3, noOfItems - 2);
+		std::vector<int> firstHalfPathA;
+		std::vector<int> firstHalfItemsA;
+		firstHalfPathA.resize(randCutPath);
+		firstHalfItemsA.resize(randCutItems);
+		for (int i = 0; i < randCutPath; i++)
+			firstHalfPathA[i] = parentA[i];
+		for (int i = 0; i < randCutItems; i++)
+			firstHalfItemsA[i] = parentA[i + noOfCities + 1];
+		std::vector<int> firstHalfPathB;
+		std::vector<int> firstHalfItemsB;
+		firstHalfPathB.resize(randCutPath);
+		firstHalfItemsB.resize(randCutItems);
+		for (int i = 0; i < randCutPath; i++)
+			firstHalfPathB[i] = parentB[i];
+		for (int i = 0; i < randCutItems; i++)
+			firstHalfItemsB[i] = parentB[i + noOfCities + 1];
 		// Copy elements from first parent up to cut point
-		for (int i = 0; i < randCut; i++)
-			childA[i] = firstHalfA[i];
-		// Add remaining elements from second parent to child while preserving order
-		int remaining = noOfCities - randCut;	
+		for (int i = 0; i < randCutPath; i++)
+			childA[i] = firstHalfPathA[i];
+		for (int i = 0; i < randCutItems; i++)
+			childA[i + noOfCities + 1] = firstHalfItemsA[i];
+		for (int i = 0; i < noOfItems - randCutItems; i++)
+			childA[i + noOfCities + 1 + randCutItems] = parentB[i];
+		// drop items if child went over max weight
+		std::vector<int> tmpItems = std::vector(childA.begin() + noOfCities + 1, childA.end());
+		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
+		{
+			int temp = rand() % tmpItems.size();
+			tmpItems[temp] = 0;
+		}
+		for(int i = 0; i < noOfItems; i++)
+			childA[noOfCities + 1 + i] = tmpItems[i];
+		// Add what's left of elements from second parent to child while preserving order (not necessary for items)
+		int remainingA = noOfCities - randCutPath;	
 		int count = 0;
 		for (int i = 0; i < noOfCities; i++)	
 		{
 			bool found = false;
-			for (int j = 0; j <= randCut; j++) 
+			for (int j = 0; j <= randCutPath; j++) 
 			{
 				// If the city is in the child, exit this loop
 				if (childA[j] == parentB[i])
@@ -202,23 +224,36 @@ int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 			// If the city was not found in the child, add it to the child
 			if (!found)
 			{
-				childA[randCut + count] = parentB[i];
+				childA[randCutPath + count] = parentB[i];
 				count++;
 			}
 			// Stop once all of the cities have been added
-			if (count == remaining)
+			if (count == remainingA)
 				break;
 		}
 		// Copy elements from second parent up to cut point
-		for (int i = 0; i < randCut; i++)
-			childB[i] = firstHalfB[i];
-		// Add remaining elements from first parent to child while preserving order
-		int remainingB = noOfCities - randCut;
+		for (int i = 0; i < randCutPath; i++)
+			childB[i] = firstHalfPathB[i];
+		for (int i = 0; i < randCutItems; i++)
+			childB[i + noOfCities + 1] = firstHalfItemsB[i];
+		for (int i = 0; i < noOfItems - randCutItems; i++)
+			childB[i + noOfCities + 1 + randCutItems] = parentA[i];
+		// drop items if child went over max weight
+		tmpItems = std::vector(childB.begin() + noOfCities + 1, childB.end());
+		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
+		{
+			int temp = rand() % tmpItems.size();
+			tmpItems[temp] = 0;
+		}
+		for(int i = 0; i < noOfItems; i++)
+			childB[noOfCities + 1 + i] = tmpItems[i];
+		// Add what's left of elements from first parent to child while preserving order (not necessary for items)
+		int remainingB = noOfCities - randCutPath;
 		int countB = 0;
 		for (int i = 0; i < noOfCities; i++)
 		{
 			bool foundB = false;
-			for (int j = 0; j <= randCut; j++)
+			for (int j = 0; j <= randCutPath; j++)
 			{
 				// If the city is in the child, exit this loop
 				if (childB[j] == parentA[i])
@@ -231,7 +266,7 @@ int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 			if (!foundB)
 			{
 				
-				childB[randCut + countB] = parentA[i];
+				childB[randCutPath + countB] = parentA[i];
 				countB++;
 			}
 			// Stop once all of the cities have been added

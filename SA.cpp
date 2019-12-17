@@ -152,11 +152,11 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 	// main loop
 	for (double T = 1; T >= 1E-9; T *= 0.9)	
 	{
-		for (int n = 0; n <= 100 * noOfCities; n++)
+		for (int n = 0; n <= 10 * noOfCities; n++)
 		{
 			// r - tweak attempt for path
-			int i = randInt(1, noOfCities - 1);
-			int j = randInt(1, noOfCities - 1);
+			int i = randNum(1, noOfCities - 1);
+			int j = randNum(1, noOfCities - 1);
 			std::swap(calcPath[i], calcPath[j]);
 
 			// tweaking attempt for steal-list
@@ -220,14 +220,14 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 	return bestProfit;
 }
 
-int SA::randInt(int l, int r)
+int SA::randNum(int l, int r)
 {
 	return rand() % (r - l + 1) + l;
 }
 
 double SA::randFraction(void)
 {
-	return randInt(1, 10000) / 10000;
+	return randNum(1, 10000) / 10000;
 }
 
 std::vector<Item> SA::getItemsFromCurrCity(int currCity, std::vector<Item> allItems) 
