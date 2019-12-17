@@ -171,7 +171,7 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 			}
 
 			float newProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, calcPath, tmpItems, 
-											noOfCities, noOfItems, knapsack);
+											  noOfCities, noOfItems, knapsack);
 
 			if (newProfit > currProfit || randFraction() < exp((currProfit - newProfit) / T))
 			{

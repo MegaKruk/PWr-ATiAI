@@ -87,7 +87,7 @@ int GA::popInit(int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<I
 	}
 
 	//for observing population
-	for (int k = 0; k < parentsPop.size(); k++)
+	/*for (int k = 0; k < parentsPop.size(); k++)
 	{
 		std::cout << k << ": ";
 		for (int l = 0; l < parentsPop[k].size(); l++)
@@ -95,7 +95,7 @@ int GA::popInit(int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<I
 			std::cout << parentsPop[k][l] << "\t";
 		}
 		std::cout << std::endl;
-	}
+	}*/
 	return 0;
 }
 
@@ -133,7 +133,7 @@ float GA::calculateDist(std::vector<std::vector<float>> &adjacancyMatrix, std::v
 }
 
 float GA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, 
-						  std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
+						  std::vector<int> &popMember, int noOfCities, int noOfItems, 
 						  Knapsack &knapsack)
 {
 	knapsack.setCurrWeight(0);
@@ -143,17 +143,17 @@ float GA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std:
 	float calcProfit = 0;
 	for(int i = 0; i < noOfCities; i++)
 	{
-		for(int j = 0; j < stolenItemsList.size(); j++)
+		for(int j = 0; j < noOfItems; j++)
 		{
-			if(calcPath[i] == valuableItemsMatrix[j].getAssignedCity() && stolenItemsList[j] == true)
+			if(popMember[i] == valuableItemsMatrix[j].getAssignedCity() && popMember[noOfCities + 1 + j] == 1)
 			{
 				knapsack.increaseCurrWeight(valuableItemsMatrix[j].getWeight());
 				knapsack.setCurrSpeed();
 				calcProfit += valuableItemsMatrix[j].getProfit();
 			}
 		}
-		int matrixX = calcPath[i];
-		int matrixY = calcPath[i + 1];
+		int matrixX = popMember[i];
+		int matrixY = popMember[i + 1];
 		tmpDist += adjacancyMatrix[matrixX][matrixY % noOfCities];
 		tmpTime += knapsack.getSpeed() / tmpDist;
 		calcProfit -= tmpTime * knapsack.getRentingRatio();
@@ -274,13 +274,13 @@ int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		int secondParent = 0;
 
 		parentA.clear();
-		parentA.resize(noOfCities + 1);
+		parentA.resize(noOfCities + 1 + noOfItems);
 		parentB.clear();
-		parentB.resize(noOfCities + 1);
+		parentB.resize(noOfCities + 1 + noOfItems);
 		contestantA.clear();
-		contestantA.resize(noOfCities + 1);
+		contestantA.resize(noOfCities + 1 + noOfItems);
 		contestantB.clear();
-		contestantB.resize(noOfCities + 1);
+		contestantB.resize(noOfCities + 1 + noOfItems);
 
 		int randA = randInt(0, popSize - 1);
 		//for (int i = 0; i < noOfCities + 1; i++)
@@ -292,28 +292,19 @@ int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		//for (int i = 0; i < noOfCities + 1; i++)
 		contestantB = parentsPop[randB];
 
-		int profA = 0;
-		int profB = 0;
-		for (int i = 0; i < noOfCities; i++)
-		{
-			int a = contestantA[i];
-			int b = contestantA[i + 1];
-			profA += adjacancyMatrix[a][b % (noOfCities)];
-		}
-		for (int i = 0; i < noOfCities; i++)
-		{
-			int a = contestantB[i];
-			int b = contestantB[i + 1];
-			profB += adjacancyMatrix[a][b % (noOfCities)];
-		}
+		float profA = calculateProfit(adjacancyMatrix, valuableItemsMatrix, contestantA, 
+									  noOfCities, noOfItems, knapsack);
+		float profB = calculateProfit(adjacancyMatrix, valuableItemsMatrix, contestantB, 
+									  noOfCities, noOfItems, knapsack);
+
 		if (profA > profB)
 		{
-			for (int j = 0; j < noOfCities + 1; j++)
+			for (int j = 0; j < noOfCities + 1 + noOfItems; j++)
 				parentA[j] = contestantA[j];
 		}
 		else
 		{
-			for (int j = 0; j < noOfCities + 1; j++)
+			for (int j = 0; j < noOfCities + 1 + noOfItems; j++)
 				parentA[j] = contestantB[j];
 		}
 
@@ -327,39 +318,29 @@ int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		//for (int i = 0; i < noOfCities + 1; i++)
 		contestantA = parentsPop[randB];
 
-		profA = 0;
-		profB = 0;
-		for (int i = 0; i < noOfCities; i++)
-		{
-			int a = contestantA[i];
-			int b = contestantA[i + 1];
-			profA += adjacancyMatrix[a][b % (noOfCities)];
-		}
-		for (int i = 0; i < noOfCities; i++)
-		{
-			int a = contestantB[i];
-			int b = contestantB[i + 1];
-			profB += adjacancyMatrix[a][b % (noOfCities)];
-		}
+		profA = calculateProfit(adjacancyMatrix, valuableItemsMatrix, contestantA, 
+								noOfCities, noOfItems, knapsack);
+		profB = calculateProfit(adjacancyMatrix, valuableItemsMatrix, contestantB, 
+								noOfCities, noOfItems, knapsack);
+
 		if (profA > profB)
 		{
-			for (int j = 0; j < noOfCities + 1; j++)
+			for (int j = 0; j < noOfCities + 1 + noOfItems; j++)
 				parentB[j] = contestantA[j];
 		}
 		else
 		{
-			for (int j = 0; j < noOfCities + 1; j++)
+			for (int j = 0; j < noOfCities + 1 + noOfItems; j++)
 				parentB[j] = contestantB[j];
 		}
 		// breed with chance to cross and to mutate
 		childA.clear();
-		childA.resize(noOfCities + 1);
+		childA.resize(noOfCities + 1 + noOfItems);
 		childB.clear();
-		childB.resize(noOfCities + 1);
-		
+		childB.resize(noOfCities + 1 + noOfItems);
+		//crossover and mutation functions
 		OPOOX(childA, childB, parentA, parentB, noOfCities, noOfItems, knapsack);
 		mutation(childA, childB, noOfCities, noOfItems, knapsack);
-
 		// Q <- Qa, Qb
 		childrenPop.push_back(childA);
 		childrenPop.push_back(childB);
@@ -382,9 +363,9 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 	
 	// best <- float min
 	float bestProfit = std::numeric_limits<float>::min();
-	std::vector<int> bestPath;
-	bestPath.clear();
-	bestPath.resize(noOfCities + 1);
+	int bestWeight = 0;
+	std::vector<int> bestFound;
+	bestFound.resize(noOfCities + 1 + noOfItems);
 	int iterations = 0;
 
 	do
@@ -403,12 +384,14 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		// Assess fitness of every P(i)
 		for (int i = 0; i < popSize; i++)
 		{
-			int currProfit = calculateDist(adjacancyMatrix, parentsPop[i], noOfCities);
+			int currProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, parentsPop[i], 
+											 noOfCities, noOfItems, knapsack);
 			if (currProfit > bestProfit)
 			{
 				bestProfit = currProfit;
 				//for (int j = 0; j < noOfCities + 1; j++)
-				bestPath = parentsPop[i];
+				bestFound = parentsPop[i];
+				bestWeight = knapsack.getCurrWeight();
 			}
 		}
 		childrenPop.clear();
@@ -429,14 +412,20 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 	} while (iterations < noOfGenerations);
 
 	std::cout << std::endl << "Profit:\t" << bestProfit << std::endl;
-	//std::cout << "Weight:\t" << bestWeight << " / " << knapsack.getMaxWeight() << std::endl;
+	std::cout << "Weight:\t" << bestWeight << " / " << knapsack.getMaxWeight() << std::endl;
 	std::cout << "Path:\t";
 	for (int i = 0; i < noOfCities + 1; i++)
 	{
-		std::cout << bestPath[i] << "\t";
+		std::cout << bestFound[i] << "\t";
 	}
-	bestPath.clear();
-	bestPath.resize(0);
+	std::cout << std::endl << "Items:\t";
+	for (int i = 0; i < noOfItems; i++)
+	{
+		if(bestFound[noOfCities + 1 + i] == 1)
+			std::cout << i << "\t";
+	}
+	bestFound.clear();
+	bestFound.resize(0);
 	childrenPop.clear();
 	childrenPop.resize(0);
 	parentsPop.clear();
