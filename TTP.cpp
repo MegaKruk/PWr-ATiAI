@@ -30,7 +30,6 @@ int TTP::initTTP()
 		std::cout << "\n8 - Modify parameters (NOT YET READY)";
 		std::cout << "\n0 - Quit\n";
 		std::cin >> option;
-		std::cout << std::endl;
 
 		switch (option)
 		{

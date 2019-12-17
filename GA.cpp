@@ -18,8 +18,8 @@ std::vector<int> GA::pathInit(int noOfCities)
 
 	for (int i = 0; i < 100 * noOfCities; i++)
 	{
-		int x = randInt(1, noOfCities - 1);
-		int y = randInt(1, noOfCities - 1);
+		int x = randNum(1, noOfCities - 1);
+		int y = randNum(1, noOfCities - 1);
 		std::swap(calcPath[x], calcPath[y]);
 	}
 
@@ -41,8 +41,8 @@ std::vector<int> GA::pathInit(int noOfCities)
 	{
 		for (int h = 0; h < 1024 * noOfCities; h++)
 		{
-			int x = randInt(1, noOfCities - 1);
-			int y = randInt(1, noOfCities - 1);
+			int x = randNum(1, noOfCities - 1);
+			int y = randNum(1, noOfCities - 1);
 			std::swap(calcPath[x], calcPath[y]);
 		}
 	}
@@ -58,7 +58,7 @@ std::vector<int> GA::itemsInit(int noOfItems, Knapsack &knapsack, std::vector<It
 	{
 		stolenItemsList[i] = 1;
 	}
-	while(calculateWeight(valuableItemsMatrix, stolenItemsList, stolenItemsList.size()) > knapsack.getMaxWeight())
+	while(calculateWeight(valuableItemsMatrix, stolenItemsList) > knapsack.getMaxWeight())
 	{
 		//std::swap(stolenItemsList[rand() % stolenItemsList.size()], stolenItemsList.back());
 		//stolenItemsList.pop_back();
@@ -100,7 +100,7 @@ int GA::popInit(int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<I
 }
 
 
-float GA::calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList, int noOfItems)
+float GA::calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList)
 {
 	float calcWeight = 0;
 	for (int i = 0; i < stolenItemsList.size(); i++)
@@ -163,16 +163,16 @@ float GA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std:
 
 // one point orden one crossover
 int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<int> &parentA, std::vector<int> &parentB, 
-			  int noOfCities, int noOfItems, Knapsack &knapsack)
+			  int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<Item> &valuableItemsMatrix)
 {
 	// 1-point crossover
-	float diceroll = randInt(1, 10000);
+	float diceroll = randNum(1, 10000);
 	diceroll = diceroll / 10000.0;
 	if (diceroll < crossRatio / 100.0)
 	{
 		//std::cout << "\nCROSSOVER!";
 		// choose random place to cut parent
-		int randCut = randInt(3, noOfCities - 2);
+		int randCut = randNum(3, noOfCities - 2);
 		std::vector<int> firstHalfA;
 		firstHalfA.resize(randCut);
 		for (int i = 0; i < randCut; i++)
@@ -250,16 +250,42 @@ int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 	return 0;
 }
 
-int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCities, int noOfItems, Knapsack &knapsack)
+int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCities, int noOfItems, Knapsack &knapsack, 
+				 std::vector<Item> &valuableItemsMatrix)
 {
 	//std::cout << "\nMUTATION!";
-	double diceroll2 = randInt(1, 10000);
+	double diceroll2 = randNum(1, 10000);
 	diceroll2 = diceroll2 / 10000.0;
 	if (diceroll2 < (mutRatio / 100.0))
 	{
-		int x = randInt(1, noOfCities - 1);
-		int y = randInt(1, noOfCities - 1);
+		int x = randNum(1, noOfCities - 1);
+		int y = randNum(1, noOfCities - 1);
 		std::swap(childA[x], childA[y]);
+		int k = randNum(1, noOfCities - 1);
+		int l = randNum(1, noOfCities - 1);
+		std::swap(childB[k], childB[l]);
+		
+		int randA = randNum(noOfCities + 1, noOfCities + 1 + noOfItems);
+		childA[randA] = 1;
+		std::vector<int> tmpItems = std::vector(childA.begin() + noOfCities + 1, childA.end());
+		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
+		{
+			int temp = rand() % tmpItems.size();
+			tmpItems[temp] = 0;
+		}
+		for(int i = 0; i < noOfItems; i++)
+			childA[noOfCities + 1 + i] = tmpItems[i];
+		
+		int randB = randNum(noOfCities + 1, noOfCities + 1 + noOfItems);
+		childB[randB] = 1;
+		tmpItems = std::vector(childB.begin() + noOfCities + 1, childB.end());
+		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
+		{
+			int temp = rand() % tmpItems.size();
+			tmpItems[temp] = 0;
+		}
+		for(int i = 0; i < noOfItems; i++)
+			childB[noOfCities + 1 + i] = tmpItems[i];
 	}
 	return 0;
 }
@@ -282,13 +308,13 @@ int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		contestantB.clear();
 		contestantB.resize(noOfCities + 1 + noOfItems);
 
-		int randA = randInt(0, popSize - 1);
+		int randA = randNum(0, popSize - 1);
 		//for (int i = 0; i < noOfCities + 1; i++)
 		contestantA = parentsPop[randA];
 
-		int randB = randInt(0, popSize - 1);
+		int randB = randNum(0, popSize - 1);
 		while (randA == randB)
-			randB = randInt(0, popSize - 1);
+			randB = randNum(0, popSize - 1);
 		//for (int i = 0; i < noOfCities + 1; i++)
 		contestantB = parentsPop[randB];
 
@@ -308,13 +334,13 @@ int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 				parentA[j] = contestantB[j];
 		}
 
-		randA = randInt(0, popSize - 1);
+		randA = randNum(0, popSize - 1);
 		//for (int i = 0; i < noOfCities + 1; i++)
 		contestantA = parentsPop[randA];
 
-		randB = randInt(0, popSize - 1);
+		randB = randNum(0, popSize - 1);
 		while (randA == randB)
-			randB = randInt(0, popSize - 1);
+			randB = randNum(0, popSize - 1);
 		//for (int i = 0; i < noOfCities + 1; i++)
 		contestantA = parentsPop[randB];
 
@@ -339,8 +365,8 @@ int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		childB.clear();
 		childB.resize(noOfCities + 1 + noOfItems);
 		//crossover and mutation functions
-		OPOOX(childA, childB, parentA, parentB, noOfCities, noOfItems, knapsack);
-		mutation(childA, childB, noOfCities, noOfItems, knapsack);
+		OPOOX(childA, childB, parentA, parentB, noOfCities, noOfItems, knapsack, valuableItemsMatrix);
+		mutation(childA, childB, noOfCities, noOfItems, knapsack, valuableItemsMatrix);
 		// Q <- Qa, Qb
 		childrenPop.push_back(childA);
 		childrenPop.push_back(childB);
@@ -384,7 +410,7 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		// Assess fitness of every P(i)
 		for (int i = 0; i < popSize; i++)
 		{
-			int currProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, parentsPop[i], 
+			float currProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, parentsPop[i], 
 											 noOfCities, noOfItems, knapsack);
 			if (currProfit > bestProfit)
 			{
@@ -433,14 +459,14 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 	return bestProfit;
 }
 
-int GA::randInt(int l, int r)
+int GA::randNum(int l, int r)
 {
 	return rand() % (r - l + 1) + l;
 }
 
 double GA::randFraction(void)
 {
-	return randInt(1, 10000) / 10000;
+	return randNum(1, 10000) / 10000;
 }
 
 // getters
@@ -525,4 +551,3 @@ GA::~GA()
 {
 
 }
-
