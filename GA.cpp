@@ -266,6 +266,8 @@ int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCit
 		std::swap(childB[k], childB[l]);
 		
 		int randA = randNum(noOfCities + 1, noOfCities + 1 + noOfItems);
+		while(childA[randA] == 1)
+			randA = randNum(noOfCities + 1, noOfCities + 1 + noOfItems);
 		childA[randA] = 1;
 		std::vector<int> tmpItems = std::vector(childA.begin() + noOfCities + 1, childA.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
@@ -277,6 +279,8 @@ int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCit
 			childA[noOfCities + 1 + i] = tmpItems[i];
 		
 		int randB = randNum(noOfCities + 1, noOfCities + 1 + noOfItems);
+		while(childB[randB] == 1)
+			randB = randNum(noOfCities + 1, noOfCities + 1 + noOfItems);
 		childB[randB] = 1;
 		tmpItems = std::vector(childB.begin() + noOfCities + 1, childB.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
