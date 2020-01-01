@@ -17,6 +17,9 @@ class SA
 private:
 	std::vector<int> calcPath;
 	std::vector<int> stolenItemsList;
+	double Tmax = 1.0;
+	double Tmin = 0.000000009;
+	double Tcoeff = 0.99;
 
 public:
 	SA();
@@ -24,6 +27,7 @@ public:
 	
 	std::vector<int> pathInit(int noOfCities);
 	std::vector<int> itemsInit(int noOfItems, Knapsack& knapsack, std::vector<Item> &valuableItemsMatrix);
+	int paramsInit();
 
 	float calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList, int noOfItems);
 	float calculateDist(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities);
@@ -41,5 +45,12 @@ public:
 	std::vector<Item> getItemsFromCurrCity(int currCity, std::vector<Item> items);
 	std::vector<int> getCalcPath();
 	std::vector<int> getStolenItemsList();
+	double getTmax();
+	double getTmin();
+	double getTcoeff();
+
+	void setTmax(double newTmax);
+	void setTmin(double newTmin);
+	void setTcoeff(double newTcoeff);
 };
 

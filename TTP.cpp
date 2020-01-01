@@ -24,13 +24,12 @@ int TTP::initTTP()
 		std::cout << "\n2 - Test Greedy Algorithm";
 		std::cout << "\n3 - Test Simulated Annealing";
 		std::cout << "\n4 - Test Genetic Algorithm";
-		std::cout << "\n5 - Modify parameters";
+		//std::cout << "\n5 - Modify parameters";
 		//std::cout << "\n6 - Make measurements for Greedy Algorithm";
 		//std::cout << "\n7 - Make measurements for Simulated Annealing";
 		//std::cout << "\n8 - Make measurements for Genetic Algorithm";
 		std::cout << "\n0 - Quit\n";
-		std::cin >> option
-;
+		std::cin >> option;
 		switch (option)
 		{
 		case 1:
@@ -199,6 +198,7 @@ int TTP::initTTP()
 			SA mySolverSA;
 			std::vector<int> firstPath = mySolverSA.pathInit(noOfCities);
 			std::vector<int> firstItems = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+			mySolverSA.paramsInit();
 
 			timer->point1 = std::chrono::high_resolution_clock::now();
 			mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, firstItems, noOfCities, noOfItems, knapsack);
