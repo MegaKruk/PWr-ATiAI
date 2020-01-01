@@ -152,7 +152,7 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 	// main loop
 	for (double T = 1; T >= 1E-9; T *= 0.9)	
 	{
-		for (int n = 0; n <= 10 * noOfCities; n++)
+		for (int n = 0; n <= 999; n++)
 		{
 			// r - tweak attempt for path
 			int i = randNum(1, noOfCities - 1);

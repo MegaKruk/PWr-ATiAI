@@ -24,13 +24,13 @@ int TTP::initTTP()
 		std::cout << "\n2 - Test Greedy Algorithm";
 		std::cout << "\n3 - Test Simulated Annealing";
 		std::cout << "\n4 - Test Genetic Algorithm";
-		std::cout << "\n5 - Make measurements for Greedy Algorithm (NOT YET READY)";
-		std::cout << "\n6 - Make measurements for Simulated Annealing (NOT YET READY)";
-		std::cout << "\n7 - Make measurements for Genetic Algorithm (NOT YET READY)";
-		std::cout << "\n8 - Modify parameters (NOT YET READY)";
+		std::cout << "\n5 - Modify parameters";
+		//std::cout << "\n6 - Make measurements for Greedy Algorithm";
+		//std::cout << "\n7 - Make measurements for Simulated Annealing";
+		//std::cout << "\n8 - Make measurements for Genetic Algorithm";
 		std::cout << "\n0 - Quit\n";
-		std::cin >> option;
-
+		std::cin >> option
+;
 		switch (option)
 		{
 		case 1:
@@ -183,6 +183,7 @@ int TTP::initTTP()
 		}
 		case 2:
 		{
+			// test greedy
 		    GreedySearch greedySearch;
 		    std::pair<std::vector<int>, std::vector<int>> result = greedySearch.evaluateGreedy(0, adjacancyMatrix, valuableItemsMatrix, knapsack);
             for (auto i = result.first.begin(); i != result.first.end(); ++i)
@@ -219,22 +220,22 @@ int TTP::initTTP()
 		}
 		case 5:
 		{
-			// measurements greedy
+			// change parameters
 			break;
 		}
 		case 6:
 		{
-			// measurements sa
+			// measurements greedy
 			break;
 		}
 		case 7:
 		{
-			// measurements ga
+			// measurements sa
 			break;
 		}
 		case 8:
 		{
-			// change parameters
+			// measurements ga
 			break;
 		}
 		case 0:
