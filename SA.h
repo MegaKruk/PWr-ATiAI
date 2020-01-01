@@ -20,6 +20,7 @@ private:
 	double Tmax = 1.0;
 	double Tmin = 0.000000009;
 	double Tcoeff = 0.99;
+	int timeLimitSec = 1;
 
 public:
 	SA();
@@ -48,9 +49,11 @@ public:
 	double getTmax();
 	double getTmin();
 	double getTcoeff();
+	int getTimeLimitSec();
 
 	void setTmax(double newTmax);
 	void setTmin(double newTmin);
 	void setTcoeff(double newTcoeff);
+	void setTimeLimitSec(int newtimeLimitSec);
 };
 

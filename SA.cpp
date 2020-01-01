@@ -39,7 +39,7 @@ int SA::paramsInit()
 	while(1)
 	{
 		int option;
-		std::cout << "Current parameters are:" << "\nTmax:\t" << Tmax << "\nTmin:\t" << Tmin << "\nTcoefficient:\t" << Tcoeff;
+		std::cout << "Current parameters are:" << "\nTmax:\t\t" << Tmax << "\nTmin:\t\t" << Tmin << "\nTcoefficient:\t" << Tcoeff << "\nTime limit [s]:\t" << timeLimitSec;
 		std::cout << "\nDo you wish to change parametres?\n1 - Yes\n2 - No, proceed\n";
 		std::cin >> option;
 		switch (option)
@@ -60,6 +60,11 @@ int SA::paramsInit()
 				double newTcoeff;
 				std::cin >> newTcoeff;
 				setTcoeff(newTcoeff);
+
+				std::cout << "Input new time limit [s]\n";
+				double newtimeLimitSec;
+				std::cin >> newtimeLimitSec;
+				setTimeLimitSec(newtimeLimitSec);
 				break;
 			}
 			case 2:
@@ -191,9 +196,15 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 	}
 	//std::cout << std::endl << "curr weight is " << calculateWeight(valuableItemsMatrix, bestItems, bestItems.size()) << "\tmax is " << knapsack.getMaxWeight();
 	timer->point1 = std::chrono::high_resolution_clock::now();
-	// main loop
-	for (double T = Tmax; T >= Tmin; T *= Tcoeff)	
+	// old main loop
+	//for (double T = Tmax; T >= Tmin; T *= Tcoeff)	
+
+	// new main loop
+	double T = Tmax;
+	while(timer->countTimeDiff() < timeLimitSec * 1E9)
 	{
+		//std::cout << timer->countTimeDiff() << " ns elapsed\n";
+
 		// r - tweak attempt for path
 		int i = randNum(1, noOfCities - 1);
 		int j = randNum(1, noOfCities - 1);
@@ -239,6 +250,8 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 		{
 			std::swap(calcPath[i], calcPath[j]);
 		}
+		if(T > Tmin)
+			T *= Tcoeff;
 	}
 	
 	std::cout << "\nProfit:\t" << bestProfit << std::endl;
@@ -306,6 +319,11 @@ double SA::getTcoeff()
 	return Tcoeff;
 }
 
+int SA::getTimeLimitSec()
+{
+	return timeLimitSec;
+}
+
 void SA::setTmax(double newTmax)
 {
 	Tmax = newTmax;
@@ -319,6 +337,11 @@ void SA::setTmin(double newTmin)
 void SA::setTcoeff(double newTcoeff)
 {
 	Tcoeff = newTcoeff;
+}
+
+void SA::setTimeLimitSec(int newTimeLimitSec)
+{
+	timeLimitSec = newTimeLimitSec;
 }
 
 SA::SA()
