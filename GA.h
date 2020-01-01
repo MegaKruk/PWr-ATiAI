@@ -26,10 +26,11 @@ private:
 	std::vector<int> childA;
 	std::vector<int> childB;
 
+	int noOfGenerations = 0;
 	int popSize = 100;
-	int noOfGenerations = 1000;
 	float crossRatio = 60;
-	float mutRatio = 3;
+	float mutRatio = 1;
+	int timeLimitSec = 2;
 
 public:
 	GA();
@@ -38,6 +39,7 @@ public:
 	std::vector<int> pathInit(int noOfCities);
 	std::vector<int> itemsInit(int noOfItems, Knapsack &knapsack, std::vector<Item> &valuableItemsMatrix);
 	int popInit(int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<Item> &valuableItemsMatrix);
+	int paramsInit();
 
 	float calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList);
 	float calculateDist(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<int> &calcPath, int noOfCities);
@@ -67,9 +69,11 @@ public:
 	int getNoOfGenerations();
 	float getCrossRatio();
 	float getMutRatio();
+	int getTimeLimitSec();
 
 	void setMutationRatio(float val);
 	void setCrossoverRatio(float val);
 	void setPopSize(int val);
 	void setNoOfGenerations(int val);
+	void setTimeLimitSec(int val);
 };

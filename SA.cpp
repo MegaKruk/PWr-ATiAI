@@ -159,7 +159,6 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 	float bestWeight = -1;
 	std::vector<int> bestPath;
 	std::vector<int> bestItems;
-	Stopwatch *timer = new Stopwatch();
 
 	// s - initial candidate
 	float currProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, calcPath, stolenItemsList, 
@@ -195,10 +194,11 @@ int SA::solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 		bestItems.pop_back();
 	}
 	//std::cout << std::endl << "curr weight is " << calculateWeight(valuableItemsMatrix, bestItems, bestItems.size()) << "\tmax is " << knapsack.getMaxWeight();
-	timer->point1 = std::chrono::high_resolution_clock::now();
+
 	// old main loop
 	//for (double T = Tmax; T >= Tmin; T *= Tcoeff)	
-
+	Stopwatch *timer = new Stopwatch();
+	timer->point1 = std::chrono::high_resolution_clock::now();
 	// new main loop
 	double T = Tmax;
 	while(timer->countTimeDiff() < timeLimitSec * 1E9)

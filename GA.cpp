@@ -99,6 +99,51 @@ int GA::popInit(int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<I
 	return 0;
 }
 
+int GA::paramsInit()
+{
+	while(1)
+	{
+		int option;
+		std::cout << "Current parameters are:" << "\nPopulation size:\t" << popSize << "\nCrossover ratio:\t" << crossRatio << "\nMutation ratio:\t\t" << mutRatio << "\nTime limit [s]:\t\t" << timeLimitSec;
+		std::cout << "\nDo you wish to change parametres?\n1 - Yes\n2 - No, proceed\n";
+		std::cin >> option;
+		switch (option)
+		{
+			case 1:
+			{
+				std::cout << "Input new population size\n";
+				float newPopSize;
+				std::cin >> newPopSize;
+				setPopSize(newPopSize);
+
+				std::cout << "Input new crossover ratio\n";
+				float newCrossRatio;
+				std::cin >> newCrossRatio;
+				setCrossoverRatio(newCrossRatio);
+
+				std::cout << "Input new mutation ratio\n";
+				float newMutRatio;
+				std::cin >> newMutRatio;
+				setMutationRatio(newMutRatio);
+
+				std::cout << "Input new time limit [s]\n";
+				float newtimeLimitSec;
+				std::cin >> newtimeLimitSec;
+				setTimeLimitSec(newtimeLimitSec);
+				break;
+			}
+			case 2:
+			{
+				return 0;
+			}
+			default:
+			{
+				std::cout << "Wrong input";
+				break;
+			}
+		}
+	}
+}
 
 float GA::calculateWeight(std::vector<Item> &valuableItemsMatrix, std::vector<int> &stolenItemsList)
 {
@@ -431,9 +476,12 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 	int bestWeight = 0;
 	std::vector<int> bestFound;
 	bestFound.resize(noOfCities + 1 + noOfItems);
-	int iterations = 0;
-
-	do
+	//int iterations = 0;
+	
+	Stopwatch *timer = new Stopwatch();
+	timer->point1 = std::chrono::high_resolution_clock::now();
+	
+	while (timer->countTimeDiff() < timeLimitSec * 1E9)
 	{
 		//for observing population
 		/*for (int k = 0; k < parentsPop.size(); k++)
@@ -450,7 +498,7 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		for (int i = 0; i < popSize; i++)
 		{
 			float currProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, parentsPop[i], 
-											 noOfCities, noOfItems, knapsack);
+											   noOfCities, noOfItems, knapsack);
 			if (currProfit > bestProfit)
 			{
 				bestProfit = currProfit;
@@ -472,9 +520,9 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 
 		for (int i = 0; i < popSize; i++)
 			parentsPop[i] = childrenPop[i];
-		iterations++;
-		//sqrt(noOfCities) * 4000
-	} while (iterations < noOfGenerations);
+		//iterations++;
+		noOfGenerations++;
+	} 
 
 	std::cout << std::endl << "Profit:\t" << bestProfit << std::endl;
 	std::cout << "Weight:\t" << bestWeight << " / " << knapsack.getMaxWeight() << std::endl;
@@ -489,12 +537,14 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		if(bestFound[noOfCities + 1 + i] == 1)
 			std::cout << i << "\t";
 	}
+	std::cout << std::endl << "Number of generations:\t" << noOfGenerations;
 	bestFound.clear();
 	bestFound.resize(0);
 	childrenPop.clear();
 	childrenPop.resize(0);
 	parentsPop.clear();
 	parentsPop.resize(0);
+	noOfGenerations = 0;
 	return bestProfit;
 }
 
@@ -579,6 +629,11 @@ void GA::setPopSize(int val)
 void GA::setNoOfGenerations(int val)
 {
 	noOfGenerations = val;
+}
+
+void GA::setTimeLimitSec(int newTimeLimitSec)
+{
+	timeLimitSec = newTimeLimitSec;
 }
 
 GA::GA()
