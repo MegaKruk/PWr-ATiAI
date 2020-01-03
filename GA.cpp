@@ -104,7 +104,7 @@ int GA::paramsInit()
 	while(1)
 	{
 		int option;
-		std::cout << "Current parameters are:" << "\nPopulation size:\t" << popSize << "\nCrossover ratio:\t" << crossRatio << "\nMutation ratio:\t\t" << mutRatio << "\nTime limit [s]:\t\t" << timeLimitSec;
+		std::cout << "Current parameters are:" << "\nPopulation size:\t" << popSize << "\nCrossover ratio:\t" << crossRatio << "%\nMutation ratio:\t\t" << mutRatio << "%\nTime limit [s]:\t\t" << timeLimitSec;
 		std::cout << "\nDo you wish to change parametres?\n1 - Yes\n2 - No, proceed\n";
 		std::cin >> option;
 		switch (option)
@@ -116,12 +116,12 @@ int GA::paramsInit()
 				std::cin >> newPopSize;
 				setPopSize(newPopSize);
 
-				std::cout << "Input new crossover ratio\n";
+				std::cout << "Input new crossover ratio [%]\n";
 				float newCrossRatio;
 				std::cin >> newCrossRatio;
 				setCrossoverRatio(newCrossRatio);
 
-				std::cout << "Input new mutation ratio\n";
+				std::cout << "Input new mutation ratio [%]\n";
 				float newMutRatio;
 				std::cin >> newMutRatio;
 				setMutationRatio(newMutRatio);
@@ -330,6 +330,144 @@ int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 	return 0;
 }
 
+// two point orden one crossover
+int GA::TPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<int> &parentA, std::vector<int> &parentB, 
+			  int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<Item> &valuableItemsMatrix)
+{
+	// 2-point crossover
+	float diceroll = randNum(1, 10000);
+	diceroll = diceroll / 10000.0;
+	if (diceroll < crossRatio / 100.0)
+	{
+		//std::cout << "\nCROSSOVER!";
+		// choose random 2 places to cut parent
+		int randCutPath1 = randNum(3, noOfCities - 2);
+		int randCutPath2 = randNum(3, noOfCities - 2);
+		while(randCutPath1 == randCutPath2)
+			randCutPath2 = randNum(3, noOfCities - 2);
+		int sizeOfPathCut = abs(randCutPath2 - randCutPath1) + 1;
+		int lowerPathCut = std::min(randCutPath1, randCutPath2);
+		int higherPathCut = std::max(randCutPath1, randCutPath2);
+		//std::cout << "\nsize path " << sizeOfPathCut << "\nlower path " << lowerPathCut << "\nhigher path " << higherPathCut;
+		int randCutItems1 = randNum(3, noOfItems - 2);
+		int randCutItems2 = randNum(3, noOfItems - 2);
+		while(randCutItems1 == randCutItems2)
+			randCutItems2 = randNum(3, noOfItems - 2);
+		int sizeOfItemsCut = abs(randCutItems2 - randCutItems1) + 1;
+		int lowerItemsCut = std::min(randCutItems1, randCutItems2);
+		int higherItemsCut = std::max(randCutItems1, randCutItems2);
+		//std::cout << "\nsize items " << sizeOfItemsCut<< "\nlower items " << lowerItemsCut << "\nhigher items " << higherItemsCut;
+		std::vector<int> firstHalfPathA;
+		std::vector<int> firstHalfItemsA;
+		firstHalfPathA.resize(sizeOfPathCut);
+		firstHalfItemsA.resize(sizeOfItemsCut);
+		for (int i = 0; i < sizeOfPathCut; i++)
+			firstHalfPathA[i] = parentA[i + lowerPathCut];
+		for (int i = 0; i < sizeOfItemsCut; i++)
+			firstHalfItemsA[i] = parentA[i + noOfCities + 1 + lowerItemsCut];
+		std::vector<int> firstHalfPathB;
+		std::vector<int> firstHalfItemsB;
+		firstHalfPathB.resize(sizeOfPathCut);
+		firstHalfItemsB.resize(sizeOfItemsCut);
+		for (int i = 0; i < sizeOfPathCut; i++)
+			firstHalfPathB[i] = parentB[i + lowerPathCut];
+		for (int i = 0; i < sizeOfItemsCut; i++)
+			firstHalfItemsB[i] = parentB[i + noOfCities + 1 + noOfCities + 1 + lowerItemsCut];
+		// Copy elements from first parent up to cut point
+		for (int i = 0; i < sizeOfPathCut; i++)
+			childA[i] = firstHalfPathA[i];
+		for (int i = 0; i < sizeOfItemsCut; i++)
+			childA[i + noOfCities + 1] = firstHalfItemsA[i];
+		for (int i = 0; i < noOfItems - sizeOfItemsCut; i++)
+			childA[i + noOfCities + 1 + sizeOfItemsCut] = parentB[i];
+		// drop items if child went over max weight
+		std::vector<int> tmpItems = std::vector(childA.begin() + noOfCities + 1, childA.end());
+		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
+		{
+			int temp = rand() % tmpItems.size();
+			tmpItems[temp] = 0;
+		}
+		for(int i = 0; i < noOfItems; i++)
+			childA[noOfCities + 1 + i] = tmpItems[i];
+		// Add what's left of elements from second parent to child while preserving order (not necessary for items)
+		int remainingA = noOfCities - sizeOfPathCut;	
+		int count = 0;
+		for (int i = 0; i < noOfCities; i++)	
+		{
+			bool found = false;
+			for (int j = 0; j <= sizeOfPathCut; j++) 
+			{
+				// If the city is in the child, exit this loop
+				if (childA[j] == parentB[i])
+				{
+					found = true;
+					break;
+				}
+			}
+			// If the city was not found in the child, add it to the child
+			if (!found)
+			{
+				childA[count + sizeOfPathCut] = parentB[i];
+				count++;
+			}
+			// Stop once all of the cities have been added
+			if (count == remainingA)
+				break;
+		}
+
+		// Copy elements from second parent up to cut point
+		for (int i = 0; i < sizeOfPathCut; i++)
+			childB[i] = firstHalfPathB[i];
+		for (int i = 0; i < sizeOfItemsCut; i++)
+			childB[i + noOfCities + 1] = firstHalfItemsB[i];
+		for (int i = 0; i < noOfItems - sizeOfItemsCut; i++)
+			childB[i + noOfCities + 1 + sizeOfItemsCut] = parentA[i];
+		// drop items if child went over max weight
+		tmpItems = std::vector(childB.begin() + noOfCities + 1, childB.end());
+		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
+		{
+			int temp = rand() % tmpItems.size();
+			tmpItems[temp] = 0;
+		}
+		for(int i = 0; i < noOfItems; i++)
+			childB[noOfCities + 1 + i] = tmpItems[i];
+		// Add what's left of elements from second parent to child while preserving order (not necessary for items)
+		int remainingB = noOfCities - sizeOfPathCut;	
+		count = 0;
+		for (int i = 0; i < noOfCities; i++)	
+		{
+			bool found = false;
+			for (int j = 0; j <= sizeOfPathCut; j++) 
+			{
+				// If the city is in the child, exit this loop
+				if (childB[j] == parentA[i])
+				{
+					found = true;
+					break;
+				}
+			}
+			// If the city was not found in the child, add it to the child
+			if (!found)
+			{
+				childB[count + sizeOfPathCut] = parentA[i];
+				count++;
+			}
+			// Stop once all of the cities have been added
+			if (count == remainingB)
+				break;
+		}
+	}
+	else
+	{
+		//std::cout << "\nCOPY!";
+		for (int i = 0; i < noOfCities + 1; i++)
+			childA[i] = parentA[i];
+		for (int i = 0; i < noOfCities + 1; i++)
+			childB[i] = parentB[i];
+	}
+	return 0;
+}
+
 int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCities, int noOfItems, Knapsack &knapsack, 
 				 std::vector<Item> &valuableItemsMatrix)
 {
@@ -449,7 +587,7 @@ int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		childB.clear();
 		childB.resize(noOfCities + 1 + noOfItems);
 		//crossover and mutation functions
-		OPOOX(childA, childB, parentA, parentB, noOfCities, noOfItems, knapsack, valuableItemsMatrix);
+		TPOOX(childA, childB, parentA, parentB, noOfCities, noOfItems, knapsack, valuableItemsMatrix);
 		mutation(childA, childB, noOfCities, noOfItems, knapsack, valuableItemsMatrix);
 		// Q <- Qa, Qb
 		childrenPop.push_back(childA);
