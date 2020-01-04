@@ -15,10 +15,17 @@
 class GA
 {
 private:
+	struct rouletteContestant
+	{
+		float fitness;
+		float chance;
+	};
+
 	std::vector<int> calcPath;
 	std::vector<int> stolenItemsList;
 	std::vector<std::vector<int>> childrenPop;
 	std::vector<std::vector<int>> parentsPop;
+	std::vector<rouletteContestant> rouletteWheel;
 	std::vector<int> contestantA;
 	std::vector<int> contestantB;
 	std::vector<int> parentA;
@@ -31,6 +38,8 @@ private:
 	float crossRatio = 60;
 	float mutRatio = 1;
 	int timeLimitSec = 2;
+	int selectionMethod = 2;
+	int crossoverMethod = 2;
 
 public:
 	GA();
@@ -55,12 +64,13 @@ public:
 				 std::vector<Item> &valuableItemsMatrix);
 	int tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
 				   int noOfCities, int noOfItems, Knapsack &knapsack);
-
+	int roulette(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
+				 int noOfCities, int noOfItems, Knapsack &knapsack);
 	float solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
 				   int noOfCities, int noOfItems, Knapsack &knapsack); 
 
 	int randNum(int l, int r);
-	double randFraction();
+	float randFraction();
 
 	std::vector<Item> getItemsFromCurrCity(int currCity, std::vector<Item> items);
 	std::vector<int> getCalcPath();
@@ -72,10 +82,14 @@ public:
 	float getCrossRatio();
 	float getMutRatio();
 	int getTimeLimitSec();
+	int getSelectionMethod();
+	int getCrossoverMethod();
 
 	void setMutationRatio(float val);
 	void setCrossoverRatio(float val);
 	void setPopSize(int val);
 	void setNoOfGenerations(int val);
 	void setTimeLimitSec(int val);
+	void setSelectionMethod(int val);
+	void setCrossoverMethod(int val);
 };

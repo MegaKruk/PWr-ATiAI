@@ -104,7 +104,17 @@ int GA::paramsInit()
 	while(1)
 	{
 		int option;
-		std::cout << "Current parameters are:" << "\nPopulation size:\t" << popSize << "\nCrossover ratio:\t" << crossRatio << "%\nMutation ratio:\t\t" << mutRatio << "%\nTime limit [s]:\t\t" << timeLimitSec;
+		std::cout << "Current parameters are:" << "\nPopulation size:\t" << popSize << "\nCrossover ratio:\t" << crossRatio;
+		std::cout << "%\nMutation ratio:\t\t" << mutRatio << "%\nTime limit:\t\t" << timeLimitSec << "s\nSelection:\t\t";
+		if(selectionMethod == 1)
+			std::cout << "tournament";
+		else
+			std::cout << "roulette wheel";
+		std::cout << "\nCrossover:\t\t";
+		if(crossoverMethod == 1)
+			std::cout << "One-Point Order One Crossover";
+		else
+			std::cout << "Two-Point Order One Crossover";
 		std::cout << "\nDo you wish to change parametres?\n1 - Yes\n2 - No, proceed\n";
 		std::cin >> option;
 		switch (option)
@@ -130,6 +140,16 @@ int GA::paramsInit()
 				float newtimeLimitSec;
 				std::cin >> newtimeLimitSec;
 				setTimeLimitSec(newtimeLimitSec);
+
+				std::cout << "Choose selection method\n1 - tournament\n2 - roulette wheel\n";
+				int newSelectionMethod;
+				std::cin >> newSelectionMethod;
+				setSelectionMethod(newSelectionMethod);
+
+				std::cout << "Choose crossover method\n1 - One-Point Order One Crossover\n2 - Two-Point Order One Crossover\n";
+				int newCrossoverMethod;
+				std::cin >> newCrossoverMethod;
+				setCrossoverMethod(newCrossoverMethod);
 				break;
 			}
 			case 2:
@@ -210,6 +230,7 @@ float GA::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std:
 int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<int> &parentA, std::vector<int> &parentB, 
 			  int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<Item> &valuableItemsMatrix)
 {
+	//std::cout << "\nCrossover: OPOOX";
 	// 1-point crossover
 	float diceroll = randNum(1, 10000);
 	diceroll = diceroll / 10000.0;
@@ -334,6 +355,7 @@ int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 int GA::TPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<int> &parentA, std::vector<int> &parentB, 
 			  int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<Item> &valuableItemsMatrix)
 {
+	//std::cout << "\nCrossover: TPOOX";
 	// 2-point crossover
 	float diceroll = randNum(1, 10000);
 	diceroll = diceroll / 10000.0;
@@ -472,7 +494,7 @@ int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCit
 				 std::vector<Item> &valuableItemsMatrix)
 {
 	//std::cout << "\nMUTATION!";
-	double diceroll2 = randNum(1, 10000);
+	float diceroll2 = randNum(1, 10000);
 	diceroll2 = diceroll2 / 10000.0;
 	if (diceroll2 < (mutRatio / 100.0))
 	{
@@ -515,12 +537,9 @@ int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCit
 int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
 				   int noOfCities, int noOfItems, Knapsack &knapsack)
 {
-	for (int k = 0; k < popSize / 2; k++)
+	//std::cout << "\nSelecion: tournament ";
+	for(int k = 0; k < popSize / 2; k++)
 	{
-		int bestParent = 0;
-		int currParent;
-		int secondParent = 0;
-
 		parentA.clear();
 		parentA.resize(noOfCities + 1 + noOfItems);
 		parentB.clear();
@@ -580,6 +599,73 @@ int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		{
 			for (int j = 0; j < noOfCities + 1 + noOfItems; j++)
 				parentB[j] = contestantB[j];
+		}
+		// breed with chance to cross and to mutate
+		childA.clear();
+		childA.resize(noOfCities + 1 + noOfItems);
+		childB.clear();
+		childB.resize(noOfCities + 1 + noOfItems);
+		//crossover and mutation functions
+		if(crossoverMethod == 1)
+			OPOOX(childA, childB, parentA, parentB, noOfCities, noOfItems, knapsack, valuableItemsMatrix);
+		else
+			TPOOX(childA, childB, parentA, parentB, noOfCities, noOfItems, knapsack, valuableItemsMatrix);
+		mutation(childA, childB, noOfCities, noOfItems, knapsack, valuableItemsMatrix);
+		// Q <- Qa, Qb
+		childrenPop.push_back(childA);
+		childrenPop.push_back(childB);
+	}
+	return 0;
+}
+
+int GA::roulette(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
+				 int noOfCities, int noOfItems, Knapsack &knapsack)
+{
+	//std::cout << "\nSelecion: roulette wheel ";
+	rouletteWheel.clear();
+	rouletteWheel.resize(popSize);
+	float sumOfFitness = 0.0;
+	for(int i = 0; i < popSize; i++)
+	{
+		rouletteWheel[i].fitness = calculateProfit(adjacancyMatrix, valuableItemsMatrix, parentsPop[i], 
+												   noOfCities, noOfItems, knapsack);
+		sumOfFitness += rouletteWheel[i].fitness; 
+	}
+
+	float previousChance = 0.0;
+	for(int i = 0; i < popSize; i++)
+	{
+		rouletteWheel[i].chance = (rouletteWheel[i].fitness / sumOfFitness) + previousChance;
+		previousChance = rouletteWheel[i].chance;
+	}
+
+	for(int k = 0; k < popSize / 2; k++)
+	{
+		parentA.clear();
+		parentA.resize(noOfCities + 1 + noOfItems);
+		parentB.clear();
+		parentB.resize(noOfCities + 1 + noOfItems);
+		float randNumA = randFraction();
+		float randNumB = randFraction();
+		for(int i = 0; i < popSize; i++)
+		{
+			if(randNumA <= rouletteWheel[i].chance)
+			{
+				parentA = parentsPop[i];
+				break;
+			}
+			else if(i == popSize - 1)
+				parentA = parentsPop[i];
+		}
+		for(int i = 0; i < popSize; i++)
+		{
+			if(randNumB <= rouletteWheel[i].chance)
+			{
+				parentB = parentsPop[i];
+				break;
+			}
+			else if(i == popSize - 1)
+				parentB = parentsPop[i];
 		}
 		// breed with chance to cross and to mutate
 		childA.clear();
@@ -647,8 +733,10 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		}
 		childrenPop.clear();
 		childrenPop.resize(0);
-
-		tournament(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
+		if(selectionMethod == 1)
+			tournament(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
+		else
+			roulette(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
 
 		// P <- Q
 		parentsPop.clear();
@@ -691,9 +779,9 @@ int GA::randNum(int l, int r)
 	return rand() % (r - l + 1) + l;
 }
 
-double GA::randFraction(void)
+float GA::randFraction(void)
 {
-	return randNum(1, 10000) / 10000;
+	return randNum(1, 1E9) / 1E9;
 }
 
 // getters
@@ -748,6 +836,21 @@ float GA::getMutRatio()
 	return mutRatio;
 }
 
+int GA::getTimeLimitSec()
+{
+	return timeLimitSec;
+}
+
+int GA::getSelectionMethod()
+{
+	return selectionMethod;
+}
+
+int GA::getCrossoverMethod()
+{
+	return crossoverMethod;
+}
+
 // setters
 void GA::setMutationRatio(float val)
 {
@@ -769,9 +872,19 @@ void GA::setNoOfGenerations(int val)
 	noOfGenerations = val;
 }
 
-void GA::setTimeLimitSec(int newTimeLimitSec)
+void GA::setTimeLimitSec(int val)
 {
-	timeLimitSec = newTimeLimitSec;
+	timeLimitSec = val;
+}
+
+void GA::setSelectionMethod(int val)
+{
+	selectionMethod = val;
+}
+
+void GA::setCrossoverMethod(int val)
+{
+	crossoverMethod = val;
 }
 
 GA::GA()
