@@ -35,5 +35,12 @@ public:
 
     std::vector<int> pickingPlan(std::vector<Item> allItems, Knapsack knapsack);
 
+    float calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, 
+                          std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
+                          Knapsack& knapsack);
+
+    float solverGreedy(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
+                       int noOfCities, int noOfItems, Knapsack& knapsack);
+
 };
 #endif //UNTITLED1_GREEDYSEARCH_H

@@ -27,11 +27,12 @@ GreedySearch::evaluateGreedy(int startCity, std::vector<std::vector<float>> citi
             if (distance < bestDistance) {
                 bestDistance = distance;
                 currentCity = toCity;
+
             }
         }
     }
-    citiesResult.push_back(startCity);
 
+    citiesResult.push_back(startCity);
     std::pair<std::vector<int>, std::vector<int>> result;
     result.first = citiesResult;
     result.second = pickingPlan(allItems, knapsack);
@@ -43,16 +44,66 @@ std::vector<int> GreedySearch::pickingPlan(std::vector<Item> allItems, Knapsack 
     std::sort(allItems.begin(), allItems.end());
     int i = 0;
     int currWeight = 0;
-    float currProfit = 0;
+    //float currProfit = 0;
     while (currWeight + allItems[i].getWeight() < knapsack.getMaxWeight()) {
         currWeight += allItems[i].getWeight();
         pickingVector.push_back(allItems[i].getIdItem());
-        currProfit += allItems[i].getProfit();
+        //currProfit += allItems[i].getProfit();
         i++;
     }
     weight = currWeight;
-    profit = (int) currProfit;
+    //profit = currProfit;
     return pickingVector;
+}
+
+float GreedySearch::calculateProfit(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix, 
+                                    std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
+                                    Knapsack& knapsack)
+{
+    knapsack.setCurrWeight(0);
+    knapsack.setCurrSpeed();
+    float tmpDist = 0;
+    float tmpTime = 0;
+    float calcProfit = 0;
+    for(int i = 0; i < noOfCities; i++)
+    {
+        for(int j = 0; j < stolenItemsList.size(); j++)
+        {
+            if(calcPath[i] == valuableItemsMatrix[stolenItemsList[j]].getAssignedCity())
+            {
+                knapsack.increaseCurrWeight(valuableItemsMatrix[stolenItemsList[j]].getWeight());
+                knapsack.setCurrSpeed();
+                calcProfit += valuableItemsMatrix[stolenItemsList[j]].getProfit();
+            }
+        }
+        int matrixX = calcPath[i];
+        int matrixY = calcPath[i + 1];
+        tmpDist += adjacancyMatrix[matrixX][matrixY % noOfCities];
+        tmpTime += knapsack.getSpeed() / tmpDist;
+        calcProfit -= tmpTime * knapsack.getRentingRatio();
+    }
+    return calcProfit;
+}
+
+float GreedySearch::solverGreedy(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
+                                 int noOfCities, int noOfItems, Knapsack& knapsack)
+{
+    std::pair<std::vector<int>, std::vector<int>> result = evaluateGreedy(0, adjacancyMatrix, valuableItemsMatrix, knapsack);
+    profit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, result.first, result.second, 
+                             noOfCities, noOfItems, knapsack);
+
+    std::cout << "Path:\t";
+    for (auto i = result.first.begin(); i != result.first.end(); ++i)
+        std::cout << *i << "\t";
+    std::cout << std::endl;
+    std::cout << "Items:\t";
+    for (auto i = result.second.begin(); i != result.second.end(); ++i)
+        std::cout << *i << "\t";
+    std::cout << std::endl;
+    std::cout << "Weight:\t" << weight << " / " << knapsack.getMaxWeight();
+    std::cout << std::endl;
+    std::cout << "Profit:\t" << profit << std::endl;
+    return profit;
 }
 
 int GreedySearch::getWeight() const {

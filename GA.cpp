@@ -750,8 +750,6 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		noOfGenerations++;
 	} 
 
-	std::cout << std::endl << "Profit:\t" << bestProfit << std::endl;
-	std::cout << "Weight:\t" << bestWeight << " / " << knapsack.getMaxWeight() << std::endl;
 	std::cout << "Path:\t";
 	for (int i = 0; i < noOfCities + 1; i++)
 	{
@@ -763,7 +761,9 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		if(bestFound[noOfCities + 1 + i] == 1)
 			std::cout << i << "\t";
 	}
-	std::cout << std::endl << "Number of generations:\t" << noOfGenerations;
+	std::cout << "\nNumber of generations:\t" << noOfGenerations;
+	std::cout << "\nWeight:\t" << bestWeight << " / " << knapsack.getMaxWeight();
+	std::cout << "\nProfit:\t" << bestProfit << std::endl;
 	bestFound.clear();
 	bestFound.resize(0);
 	childrenPop.clear();

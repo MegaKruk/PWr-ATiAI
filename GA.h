@@ -37,7 +37,7 @@ private:
 	int popSize = 100;
 	float crossRatio = 60;
 	float mutRatio = 1;
-	int timeLimitSec = 2;
+	int timeLimitSec = 10;
 	int selectionMethod = 2;
 	int crossoverMethod = 2;
 

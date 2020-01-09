@@ -18,9 +18,9 @@ private:
 	std::vector<int> calcPath;
 	std::vector<int> stolenItemsList;
 	double Tmax = 1.0;
-	double Tmin = 0.000000009;
-	double Tcoeff = 0.99;
-	int timeLimitSec = 1;
+	double Tmin = 0.0000000001;
+	double Tcoeff = 0.9;
+	int timeLimitSec = 10;
 
 public:
 	SA();
@@ -36,9 +36,9 @@ public:
 						  std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
 						  Knapsack& knapsack);  
 
-	int solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
-				 std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
-				 Knapsack& knapsack); 
+	float solverSA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<Item> &valuableItemsMatrix,  
+				   std::vector<int> &calcPath, std::vector<int> &stolenItemsList, int noOfCities, int noOfItems, 
+				   Knapsack& knapsack); 
 
 	int randNum(int l, int r);
 	double randFraction(void);

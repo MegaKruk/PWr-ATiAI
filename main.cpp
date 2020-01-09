@@ -1,6 +1,10 @@
 /*************************************/
 /******Traveling Thief Problem********/
+/*************************************/
 /**********Greedy Algorithm***********/
+/*********Simulated Annealing*********/
+/**********Genetic Algorithm**********/
+/*************************************/
 /***********Implemented by************/
 /*Filip Mazur*Dawid Ryl*Piotr Neumann*/
 /*************************************/
@@ -10,7 +14,7 @@
 
 int main()
 {
-//	srand(time(0));
+	srand(time(0));
 	TTP *testUnit = new TTP();
 	testUnit->start();
 	delete(testUnit);

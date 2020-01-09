@@ -24,10 +24,8 @@ int TTP::initTTP()
 		std::cout << "\n2 - Test Greedy Algorithm";
 		std::cout << "\n3 - Test Simulated Annealing";
 		std::cout << "\n4 - Test Genetic Algorithm";
-		//std::cout << "\n5 - Modify parameters";
-		//std::cout << "\n6 - Make measurements for Greedy Algorithm";
-		//std::cout << "\n7 - Make measurements for Simulated Annealing";
-		//std::cout << "\n8 - Make measurements for Genetic Algorithm";
+		std::cout << "\n5 - Perform parameters experiment";
+		//std::cout << "\n6 - Make measurements";
 		std::cout << "\n0 - Quit\n";
 		std::cin >> option;
 		switch (option)
@@ -42,8 +40,8 @@ int TTP::initTTP()
 
 			timer->point1 = std::chrono::high_resolution_clock::now();
 
-//			myFile.open("data/" + filename);
-			myFile.open("D:\\Studia\\Magisterka\\AI\\Project\\PWr-ATiAI\\data\\" + filename);
+			myFile.open("data/" + filename);
+			//myFile.open("D:\\Studia\\Magisterka\\AI\\Project\\PWr-ATiAI\\data\\" + filename);
 			if (myFile.is_open())
 			{
 				do myFile >> filePointer;
@@ -184,17 +182,9 @@ int TTP::initTTP()
 		{
 			// test greedy
 		    GreedySearch greedySearch;
-		    std::pair<std::vector<int>, std::vector<int>> result = greedySearch.evaluateGreedy(0, adjacancyMatrix, valuableItemsMatrix, knapsack);
-            std::cout << "Profit: " << greedySearch.getProfit() << std::endl;
-            std::cout << "Weight: " << greedySearch.getWeight() << " / " << knapsack.getMaxWeight();
-            std::cout << std::endl;
-            std::cout << "Path:\t";
-            for (auto i = result.first.begin(); i != result.first.end(); ++i)
-                std::cout << *i << "\t";
-            std::cout << std::endl;
-            std::cout << "Items:\t";
-            for (auto i = result.second.begin(); i != result.second.end(); ++i)
-                std::cout << *i << "\t";
+		    timer->point1 = std::chrono::high_resolution_clock::now();
+			greedySearch.solverGreedy(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
+			std::cout << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			break;
 		}
 		case 3:
@@ -206,7 +196,7 @@ int TTP::initTTP()
 			std::vector<int> firstItems = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
 			timer->point1 = std::chrono::high_resolution_clock::now();
 			mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, firstItems, noOfCities, noOfItems, knapsack);
-			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+			std::cout << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			break;
 		}
 		case 4:
@@ -219,27 +209,47 @@ int TTP::initTTP()
 			mySolverGA.popInit(noOfCities, noOfItems, knapsack, valuableItemsMatrix);
 			timer->point1 = std::chrono::high_resolution_clock::now();
 			mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
-			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+			std::cout << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			break;
 		}
 		case 5:
 		{
-			// change parameters
+			// parameters experiment
+			SA mySolverSA;
+			std::ofstream output1("exp1_SA_Tmax1_trivial.txt");
+			std::vector<int> firstPath = mySolverSA.pathInit(noOfCities);
+			std::vector<int> firstItems = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+			mySolverSA.setTimeLimitSec(1);
+			mySolverSA.setTmax(1.0);
+			for(int i = 0; i < 10; i++)
+			{
+				timer->point1 = std::chrono::high_resolution_clock::now();
+				float result = mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, firstItems, noOfCities, noOfItems, knapsack);
+				output1 << timer->countTimeDiff() << "\t" << result << std::endl;
+				std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+				std::cout << std::endl << (i + 1) * 100 / 10 << " \% done\n\n";
+			}
+			output1.close();
 			break;
+
+			/*ofstream myOutput("output.txt");
+			int result = 0;
+			Stopwatch *timer = new Stopwatch();
+
+			for (int i = 0; i < 51; i++)
+			{
+				timer->point1 = chrono::high_resolution_clock::now();
+				popInit(popMember, noOfCities, parentsPop, popSize, adjacancyMatrix);
+				result = TSP(adjacancyMatrix, popMember, noOfCities, parentsPop, childrenPop, popSize, crossoverRatio, mutationRatio);
+				myOutput << timer->countTimeDiff() << "\t" << result << endl;
+				popMember.clear();
+				std::cout << endl << (i + 1) * 100 / 51 << " % done";
+			}
+			break;*/
 		}
 		case 6:
 		{
-			// measurements greedy
-			break;
-		}
-		case 7:
-		{
-			// measurements sa
-			break;
-		}
-		case 8:
-		{
-			// measurements ga
+			// measurements 
 			break;
 		}
 		case 0:

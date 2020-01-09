@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
+#include <fstream>
 #include "Knapsack.h"
 #include "Item.h"
 
