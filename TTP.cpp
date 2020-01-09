@@ -4,6 +4,7 @@
 #include "Knapsack.h"
 #include "Item.h"
 #include "SA.h"
+#include "GA.h"
 
 int TTP::start()
 {
@@ -22,15 +23,13 @@ int TTP::initTTP()
 		std::cout << "\n1 - Load data";
 		std::cout << "\n2 - Test Greedy Algorithm";
 		std::cout << "\n3 - Test Simulated Annealing";
-		std::cout << "\n4 - Test Genetic Algorithm (NOT YET READY)";
-		std::cout << "\n5 - Make measurements for Greedy Algorithm (NOT YET READY)";
-		std::cout << "\n6 - Make measurements for Simulated Annealing (NOT YET READY)";
-		std::cout << "\n7 - Make measurements for Genetic Algorithm (NOT YET READY)";
-		std::cout << "\n8 - Modify parameters (NOT YET READY)";
+		std::cout << "\n4 - Test Genetic Algorithm";
+		//std::cout << "\n5 - Modify parameters";
+		//std::cout << "\n6 - Make measurements for Greedy Algorithm";
+		//std::cout << "\n7 - Make measurements for Simulated Annealing";
+		//std::cout << "\n8 - Make measurements for Genetic Algorithm";
 		std::cout << "\n0 - Quit\n";
 		std::cin >> option;
-		std::cout << std::endl;
-
 		switch (option)
 		{
 		case 1:
@@ -183,6 +182,7 @@ int TTP::initTTP()
 		}
 		case 2:
 		{
+			// test greedy
 		    GreedySearch greedySearch;
 		    std::pair<std::vector<int>, std::vector<int>> result = greedySearch.evaluateGreedy(0, adjacancyMatrix, valuableItemsMatrix, knapsack);
             std::cout << "Profit: " << greedySearch.getProfit() << std::endl;
@@ -201,38 +201,45 @@ int TTP::initTTP()
 		{
 			// test sa
 			SA mySolverSA;
+			mySolverSA.paramsInit();
 			std::vector<int> firstPath = mySolverSA.pathInit(noOfCities);
-			std::vector<int> items = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
-
+			std::vector<int> firstItems = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
 			timer->point1 = std::chrono::high_resolution_clock::now();
-			mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, items, noOfCities, noOfItems, knapsack);
+			mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath, firstItems, noOfCities, noOfItems, knapsack);
 			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
-			
 			break;
 		}
 		case 4:
 		{
 			// test ga
+			GA mySolverGA;
+			//std::vector<int> firstPath = mySolverGA.pathInit(noOfCities);
+			//std::vector<int> items = mySolverGA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+			mySolverGA.paramsInit();
+			mySolverGA.popInit(noOfCities, noOfItems, knapsack, valuableItemsMatrix);
+			timer->point1 = std::chrono::high_resolution_clock::now();
+			mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
+			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			break;
 		}
 		case 5:
 		{
-			// measurements greedy
+			// change parameters
 			break;
 		}
 		case 6:
 		{
-			// measurements sa
+			// measurements greedy
 			break;
 		}
 		case 7:
 		{
-			// measurements ga
+			// measurements sa
 			break;
 		}
 		case 8:
 		{
-			// change parameters
+			// measurements ga
 			break;
 		}
 		case 0:

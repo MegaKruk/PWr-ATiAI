@@ -1,4 +1,4 @@
-SOURCES = Stopwatch.cpp TTP.cpp main.cpp GreedySearch.cpp Item.cpp Knapsack.cpp SA.cpp
+SOURCES = Stopwatch.cpp TTP.cpp main.cpp GreedySearch.cpp Item.cpp Knapsack.cpp SA.cpp GA.cpp
 
 all: main
 

@@ -11,8 +11,8 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
-#include "Item.h"
 #include "Knapsack.h"
+#include "Item.h"
 
 class TTP
 {
@@ -28,20 +28,9 @@ public:
 	
 	int getNoOfCities();
 	int getNoOfItems();
-	/*float getItemProfit(int);
-	float getItemWeight(int);
-	int getItemCity(int);
-	float getMaxWeight();
-	float getCurrWeight();
-	float getCurrRentingRatio();
-	float getMinSpeed();
-	float getMaxSpeed();
-	float getCurrSpeed();*/
+
 	std::vector<int> getStolenItemsList();
 	std::vector<std::vector<float>> getAdjacancyMatrix();
-
-	//void increaseCurrWeight(float);
-	//void setCurrSpeed();
 
 	TTP();
 	~TTP();
