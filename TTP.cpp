@@ -25,7 +25,7 @@ int TTP::initTTP()
 		std::cout << "\n3 - Test Simulated Annealing";
 		std::cout << "\n4 - Test Genetic Algorithm";
 		std::cout << "\n5 - Perform parameters experiment";
-		//std::cout << "\n6 - Make measurements";
+		std::cout << "\n6 - Make measurements";
 		std::cout << "\n0 - Quit\n";
 		std::cin >> option;
 		switch (option)
@@ -684,6 +684,171 @@ int TTP::initTTP()
 		case 6:
 		{
 			// measurements 
+			GreedySearch greedySearch;
+			SA mySolverSA;
+			GA mySolverGA;
+
+			// greedy for reference
+			std::ofstream output30("output/exp2/Greedy_" + filename + ".log");
+			for(int i = 0; i < 10; i++)
+			{
+				timer->point1 = std::chrono::high_resolution_clock::now();
+				float result = greedySearch.solverGreedy(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
+				output30 << timer->countTimeDiff() << "\t" << result << std::endl;
+				std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+				std::cout << std::endl << (i + 1) * 100 / 10 << " \% done\n\n";
+			}
+			output30.close();
+
+			/***************************************************************************************************************/
+
+			// best params for SA from Experiment 1: Tmax = 10, Tmin = 1E-11, Tcoeff = 0.999
+			// SA 1 sec
+			std::ofstream output31("output/exp2/SA_1sec_" + filename + ".log");
+			std::vector<int> firstPath13 = mySolverSA.pathInit(noOfCities);
+			std::vector<int> firstItems13 = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+			mySolverSA.setTimeLimitSec(1);
+			mySolverSA.setTmax(10.0);
+			mySolverSA.setTmin(1E-11);
+			mySolverSA.setTcoeff(0.999);
+			for(int i = 0; i < 10; i++)
+			{
+				timer->point1 = std::chrono::high_resolution_clock::now();
+				float result = mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath13, firstItems13, noOfCities, noOfItems, knapsack);
+				output31 << result << std::endl;
+				std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+				std::cout << std::endl << (i + 1) * 100 / 10 << " \% done\n\n";
+			}
+			output31.close();
+
+			// SA 10 sec
+			std::ofstream output32("output/exp2/SA_10sec_" + filename + ".log");
+			std::vector<int> firstPath14 = mySolverSA.pathInit(noOfCities);
+			std::vector<int> firstItems14 = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+			mySolverSA.setTimeLimitSec(10);
+			mySolverSA.setTmax(10.0);
+			mySolverSA.setTmin(1E-11);
+			mySolverSA.setTcoeff(0.999);
+			for(int i = 0; i < 10; i++)
+			{
+				timer->point1 = std::chrono::high_resolution_clock::now();
+				float result = mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath14, firstItems14, noOfCities, noOfItems, knapsack);
+				output32 << result << std::endl;
+				std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+				std::cout << std::endl << (i + 1) * 100 / 10 << " \% done\n\n";
+			}
+			output32.close();
+
+			// SA 100 sec
+			std::ofstream output33("output/exp2/SA_100sec_" + filename + ".log");
+			std::vector<int> firstPath15 = mySolverSA.pathInit(noOfCities);
+			std::vector<int> firstItems15 = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+			mySolverSA.setTimeLimitSec(100);
+			mySolverSA.setTmax(10.0);
+			mySolverSA.setTmin(1E-11);
+			mySolverSA.setTcoeff(0.999);
+			for(int i = 0; i < 10; i++)
+			{
+				timer->point1 = std::chrono::high_resolution_clock::now();
+				float result = mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath15, firstItems15, noOfCities, noOfItems, knapsack);
+				output33 << result << std::endl;
+				std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+				std::cout << std::endl << (i + 1) * 100 / 10 << " \% done\n\n";
+			}
+			output33.close();
+
+			/***************************************************************************************************************/
+
+			// best params for SA from Experiment 1: crossRatio = 55%, mutRatio = 1%, popSize = 200
+			// selection = roulette wheel, OX = TPOOX
+			// GA 1 sec
+			std::ofstream output34("output/exp2/GA_1sec_" + filename + ".log");
+			for(int i = 0; i < 10; i++)
+			{
+				mySolverGA.setTimeLimitSec(1);
+				mySolverGA.setCrossoverRatio(55);
+				mySolverGA.setMutationRatio(1);
+				mySolverGA.setPopSize(200);
+				mySolverGA.setSelectionMethod(2);
+				mySolverGA.setCrossoverMethod(2);
+				mySolverGA.popInit(noOfCities, noOfItems, knapsack, valuableItemsMatrix);
+				timer->point1 = std::chrono::high_resolution_clock::now();
+				float result = mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
+				output34 << result << std::endl;
+				std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+				std::cout << std::endl << (i + 1) * 100 / 10 << " \% done\n\n";
+			}
+			output34.close();
+
+			// GA 10 sec
+			std::ofstream output35("output/exp2/GA_10sec_" + filename + ".log");
+			for(int i = 0; i < 10; i++)
+			{
+				mySolverGA.setTimeLimitSec(10);
+				mySolverGA.setCrossoverRatio(55);
+				mySolverGA.setMutationRatio(1);
+				mySolverGA.setPopSize(200);
+				mySolverGA.setSelectionMethod(2);
+				mySolverGA.setCrossoverMethod(2);
+				mySolverGA.popInit(noOfCities, noOfItems, knapsack, valuableItemsMatrix);
+				timer->point1 = std::chrono::high_resolution_clock::now();
+				float result = mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
+				output35 << result << std::endl;
+				std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+				std::cout << std::endl << (i + 1) * 100 / 10 << " \% done\n\n";
+			}
+			output35.close();
+
+			// GA 100 sec
+			std::ofstream output36("output/exp2/GA_100sec_" + filename + ".log");
+			for(int i = 0; i < 10; i++)
+			{
+				mySolverGA.setTimeLimitSec(100);
+				mySolverGA.setCrossoverRatio(55);
+				mySolverGA.setMutationRatio(1);
+				mySolverGA.setPopSize(200);
+				mySolverGA.setSelectionMethod(2);
+				mySolverGA.setCrossoverMethod(2);
+				mySolverGA.popInit(noOfCities, noOfItems, knapsack, valuableItemsMatrix);
+				timer->point1 = std::chrono::high_resolution_clock::now();
+				float result = mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
+				output36 << result << std::endl;
+				std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+				std::cout << std::endl << (i + 1) * 100 / 10 << " \% done\n\n";
+			}
+			output36.close();
+
+			/***************************************************************************************************************/
+			// final showdown - 10000 seconds, 1 iteration
+			// GA 10000 sec
+			/*std::ofstream output37("output/exp2/GA_10000sec_" + filename + ".log");
+			mySolverGA.setTimeLimitSec(10000);
+			mySolverGA.setCrossoverRatio(55);
+			mySolverGA.setMutationRatio(1);
+			mySolverGA.setPopSize(200);
+			mySolverGA.setSelectionMethod(2);
+			mySolverGA.setCrossoverMethod(2);
+			mySolverGA.popInit(noOfCities, noOfItems, knapsack, valuableItemsMatrix);
+			timer->point1 = std::chrono::high_resolution_clock::now();
+			float result = mySolverGA.solverGA(adjacancyMatrix, valuableItemsMatrix, noOfCities, noOfItems, knapsack);
+			output37 << result << std::endl;
+			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+			output37.close();
+
+			// SA 10000 sec
+			std::ofstream output38("output/exp2/SA_10000sec_" + filename + ".log");
+			std::vector<int> firstPath16 = mySolverSA.pathInit(noOfCities);
+			std::vector<int> firstItems16 = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
+			mySolverSA.setTimeLimitSec(10000);
+			mySolverSA.setTmax(10.0);
+			mySolverSA.setTmin(1E-11);
+			mySolverSA.setTcoeff(0.999);
+			timer->point1 = std::chrono::high_resolution_clock::now();
+			result = mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath16, firstItems16, noOfCities, noOfItems, knapsack);
+			output38 << result << std::endl;
+			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
+			output38.close();*/
+
 			break;
 		}
 		case 0:
