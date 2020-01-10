@@ -819,10 +819,10 @@ int TTP::initTTP()
 			output36.close();
 
 			/***************************************************************************************************************/
-			// final showdown - 10000 seconds, 1 iteration
-			// GA 10000 sec
-			/*std::ofstream output37("output/exp2/GA_10000sec_" + filename + ".log");
-			mySolverGA.setTimeLimitSec(10000);
+			// final showdown - 1000 seconds, 1 iteration
+			// GA 1000 sec
+			std::ofstream output37("output/exp2/GA_1000sec_" + filename + ".log");
+			mySolverGA.setTimeLimitSec(1000);
 			mySolverGA.setCrossoverRatio(55);
 			mySolverGA.setMutationRatio(1);
 			mySolverGA.setPopSize(200);
@@ -835,11 +835,11 @@ int TTP::initTTP()
 			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
 			output37.close();
 
-			// SA 10000 sec
-			std::ofstream output38("output/exp2/SA_10000sec_" + filename + ".log");
+			// SA 1000 sec
+			std::ofstream output38("output/exp2/SA_1000sec_" + filename + ".log");
 			std::vector<int> firstPath16 = mySolverSA.pathInit(noOfCities);
 			std::vector<int> firstItems16 = mySolverSA.itemsInit(noOfItems, knapsack, valuableItemsMatrix);
-			mySolverSA.setTimeLimitSec(10000);
+			mySolverSA.setTimeLimitSec(1000);
 			mySolverSA.setTmax(10.0);
 			mySolverSA.setTmin(1E-11);
 			mySolverSA.setTcoeff(0.999);
@@ -847,7 +847,7 @@ int TTP::initTTP()
 			result = mySolverSA.solverSA(adjacancyMatrix, valuableItemsMatrix, firstPath16, firstItems16, noOfCities, noOfItems, knapsack);
 			output38 << result << std::endl;
 			std::cout << std::endl << std::endl << timer->countTimeDiff() << " nanosecs to complete this action\n";
-			output38.close();*/
+			output38.close();
 
 			break;
 		}
