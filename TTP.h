@@ -22,6 +22,7 @@ private:
 	int noOfItems;
 	std::vector<std::vector<float>> adjacancyMatrix;
 	std::vector<Item> valuableItemsMatrix;
+	std::string filename;
 
 public:
 	int start();

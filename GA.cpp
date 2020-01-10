@@ -22,31 +22,7 @@ std::vector<int> GA::pathInit(int noOfCities)
 		int y = randNum(1, noOfCities - 1);
 		std::swap(calcPath[x], calcPath[y]);
 	}
-
-	/*for (int l = 0; l < calcPath.size(); l++)
-	{
-		std::cout << calcPath[l] << "\t";
-	}
-	std::cout << std::endl;*/
-
 	return calcPath;
-	/*for (int i = 0; i < noOfCities; i++)
-	{
-		calcPath[i] = i;
-		if (i == noOfCities - 1)
-			calcPath[i + 1] = calcPath[0];
-	}
-
-	for (int j = 0; j < popSize; j++)
-	{
-		for (int h = 0; h < 1024 * noOfCities; h++)
-		{
-			int x = randNum(1, noOfCities - 1);
-			int y = randNum(1, noOfCities - 1);
-			std::swap(calcPath[x], calcPath[y]);
-		}
-	}
-	return calcPath;*/
 }
 
 std::vector<int> GA::itemsInit(int noOfItems, Knapsack &knapsack, std::vector<Item> &valuableItemsMatrix)
@@ -60,12 +36,8 @@ std::vector<int> GA::itemsInit(int noOfItems, Knapsack &knapsack, std::vector<It
 	}
 	while(calculateWeight(valuableItemsMatrix, stolenItemsList) > knapsack.getMaxWeight())
 	{
-		//std::swap(stolenItemsList[rand() % stolenItemsList.size()], stolenItemsList.back());
-		//stolenItemsList.pop_back();
 		int temp = rand() % stolenItemsList.size();
 		stolenItemsList[temp] = 0;
-		// cout for debug
-		//std::cout << "\n Dropped item[" << temp << "]\n";
 	}
 	return stolenItemsList;
 }
