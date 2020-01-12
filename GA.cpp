@@ -1,3 +1,4 @@
+#include <vector>
 #include "Stopwatch.h"
 #include "GA.h"
 #include "TTP.h"
@@ -236,7 +237,7 @@ int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 		for (int i = 0; i < noOfItems - randCutItems; i++)
 			childA[i + noOfCities + 1 + randCutItems] = parentB[i];
 		// drop items if child went over max weight
-		std::vector<int> tmpItems = std::vector(childA.begin() + noOfCities + 1, childA.end());
+		std::vector<int> tmpItems = std::vector<int>(childA.begin() + noOfCities + 1, childA.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -277,7 +278,7 @@ int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 		for (int i = 0; i < noOfItems - randCutItems; i++)
 			childB[i + noOfCities + 1 + randCutItems] = parentA[i];
 		// drop items if child went over max weight
-		tmpItems = std::vector(childB.begin() + noOfCities + 1, childB.end());
+		tmpItems = std::vector<int>(childB.begin() + noOfCities + 1, childB.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -375,7 +376,7 @@ int GA::TPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 		for (int i = 0; i < noOfItems - sizeOfItemsCut; i++)
 			childA[i + noOfCities + 1 + sizeOfItemsCut] = parentB[i];
 		// drop items if child went over max weight
-		std::vector<int> tmpItems = std::vector(childA.begin() + noOfCities + 1, childA.end());
+		std::vector<int> tmpItems = std::vector<int>(childA.begin() + noOfCities + 1, childA.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -417,7 +418,7 @@ int GA::TPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 		for (int i = 0; i < noOfItems - sizeOfItemsCut; i++)
 			childB[i + noOfCities + 1 + sizeOfItemsCut] = parentA[i];
 		// drop items if child went over max weight
-		tmpItems = std::vector(childB.begin() + noOfCities + 1, childB.end());
+		tmpItems = std::vector<int>(childB.begin() + noOfCities + 1, childB.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -481,7 +482,7 @@ int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCit
 		while(childA[randA] == 1)
 			randA = randNum(noOfCities + 1, noOfCities + 1 + noOfItems);
 		childA[randA] = 1;
-		std::vector<int> tmpItems = std::vector(childA.begin() + noOfCities + 1, childA.end());
+		std::vector<int> tmpItems = std::vector<int>(childA.begin() + noOfCities + 1, childA.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -494,7 +495,7 @@ int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCit
 		while(childB[randB] == 1)
 			randB = randNum(noOfCities + 1, noOfCities + 1 + noOfItems);
 		childB[randB] = 1;
-		tmpItems = std::vector(childB.begin() + noOfCities + 1, childB.end());
+		tmpItems = std::vector<int>(childB.begin() + noOfCities + 1, childB.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -676,6 +677,8 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 	
 	Stopwatch *timer = new Stopwatch();
 	timer->point1 = std::chrono::high_resolution_clock::now();
+
+    std::vector<int> popBestProfits;
 	
 	while (timer->countTimeDiff() < timeLimitSec * 1E9)
 	{
@@ -689,12 +692,17 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 			}
 			std::cout << std::endl;
 		}*/
-
+        float popBestProfit = -1;
 		// Assess fitness of every P(i)
 		for (int i = 0; i < popSize; i++)
 		{
 			float currProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, parentsPop[i], 
 											   noOfCities, noOfItems, knapsack);
+            if (currProfit > popBestProfit)
+            {
+                popBestProfit = currProfit;
+            }
+
 			if (currProfit > bestProfit)
 			{
 				bestProfit = currProfit;
@@ -703,6 +711,7 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 				bestWeight = knapsack.getCurrWeight();
 			}
 		}
+		popBestProfits.push_back(popBestProfit);
 		childrenPop.clear();
 		childrenPop.resize(0);
 		if(selectionMethod == 1)
@@ -720,7 +729,8 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 			parentsPop[i] = childrenPop[i];
 		//iterations++;
 		noOfGenerations++;
-	} 
+	}
+    graphUtils(popBestProfits, noOfGenerations);
 
 	std::cout << "Path:\t";
 	for (int i = 0; i < noOfCities + 1; i++)
@@ -866,5 +876,19 @@ GA::GA()
 
 GA::~GA()
 {
+
+}
+
+void GA::graphUtils(std::vector<int> profit, int generations) {
+//    std::ofstream output1("output/exp3/ga_.log");
+    std::string output;
+    int i = 0;
+    for(auto it = profit.begin(); it != profit.end(); it++) {
+        output += std::to_string(*it) + ", " + std::to_string(i++) + '\n';
+    }
+    output += std::to_string(generations);
+    std::ofstream output1("D:\\Studia\\Magisterka\\AI\\Project\\PWr-ATiAI\\output\\ga_.log");
+    output1 << generations << "\t" << output << std::endl;
+    output1.close();
 
 }

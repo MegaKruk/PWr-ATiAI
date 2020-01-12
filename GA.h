@@ -92,4 +92,6 @@ public:
 	void setTimeLimitSec(int val);
 	void setSelectionMethod(int val);
 	void setCrossoverMethod(int val);
+
+    void graphUtils(std::vector<int> profit, int generations);
 };
