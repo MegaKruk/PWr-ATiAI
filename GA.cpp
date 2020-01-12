@@ -236,7 +236,7 @@ int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 		for (int i = 0; i < noOfItems - randCutItems; i++)
 			childA[i + noOfCities + 1 + randCutItems] = parentB[i];
 		// drop items if child went over max weight
-		std::vector<int> tmpItems = std::vector(childA.begin() + noOfCities + 1, childA.end());
+		std::vector<int> tmpItems = std::vector<int>(childA.begin() + noOfCities + 1, childA.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -277,7 +277,7 @@ int GA::OPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 		for (int i = 0; i < noOfItems - randCutItems; i++)
 			childB[i + noOfCities + 1 + randCutItems] = parentA[i];
 		// drop items if child went over max weight
-		tmpItems = std::vector(childB.begin() + noOfCities + 1, childB.end());
+		tmpItems = std::vector<int>(childB.begin() + noOfCities + 1, childB.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -375,7 +375,7 @@ int GA::TPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 		for (int i = 0; i < noOfItems - sizeOfItemsCut; i++)
 			childA[i + noOfCities + 1 + sizeOfItemsCut] = parentB[i];
 		// drop items if child went over max weight
-		std::vector<int> tmpItems = std::vector(childA.begin() + noOfCities + 1, childA.end());
+		std::vector<int> tmpItems = std::vector<int>(childA.begin() + noOfCities + 1, childA.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -417,7 +417,7 @@ int GA::TPOOX(std::vector<int> &childA, std::vector<int> &childB, std::vector<in
 		for (int i = 0; i < noOfItems - sizeOfItemsCut; i++)
 			childB[i + noOfCities + 1 + sizeOfItemsCut] = parentA[i];
 		// drop items if child went over max weight
-		tmpItems = std::vector(childB.begin() + noOfCities + 1, childB.end());
+		tmpItems = std::vector<int>(childB.begin() + noOfCities + 1, childB.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -481,7 +481,7 @@ int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCit
 		while(childA[randA] == 1)
 			randA = randNum(noOfCities + 1, noOfCities + 1 + noOfItems);
 		childA[randA] = 1;
-		std::vector<int> tmpItems = std::vector(childA.begin() + noOfCities + 1, childA.end());
+		std::vector<int> tmpItems = std::vector<int>(childA.begin() + noOfCities + 1, childA.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
@@ -494,7 +494,7 @@ int GA::mutation(std::vector<int> &childA, std::vector<int> &childB, int noOfCit
 		while(childB[randB] == 1)
 			randB = randNum(noOfCities + 1, noOfCities + 1 + noOfItems);
 		childB[randB] = 1;
-		tmpItems = std::vector(childB.begin() + noOfCities + 1, childB.end());
+		tmpItems = std::vector<int>(childB.begin() + noOfCities + 1, childB.end());
 		while(calculateWeight(valuableItemsMatrix, tmpItems) > knapsack.getMaxWeight())
 		{
 			int temp = rand() % tmpItems.size();
