@@ -678,7 +678,7 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 	Stopwatch *timer = new Stopwatch();
 	timer->point1 = std::chrono::high_resolution_clock::now();
 
-    std::vector<int> popBestProfits;
+    std::vector<float> popBestProfits;
 	
 	while (timer->countTimeDiff() < timeLimitSec * 1E9)
 	{
@@ -879,15 +879,15 @@ GA::~GA()
 
 }
 
-void GA::graphUtils(std::vector<int> profit, int generations) {
-//    std::ofstream output1("output/exp3/ga_.log");
+void GA::graphUtils(std::vector<float> profit, int generations) {
+//    std::ofstream output1("output/exp3/ga_.csv");
     std::string output;
     int i = 0;
     for(auto it = profit.begin(); it != profit.end(); it++) {
         output += std::to_string(*it) + ", " + std::to_string(i++) + '\n';
     }
     output += std::to_string(generations);
-    std::ofstream output1("D:\\Studia\\Magisterka\\AI\\Project\\PWr-ATiAI\\output\\ga_.log");
+    std::ofstream output1("D:\\Studia\\Magisterka\\AI\\Project\\PWr-ATiAI\\output\\ga_.csv");
     output1 << generations << "\t" << output << std::endl;
     output1.close();
 

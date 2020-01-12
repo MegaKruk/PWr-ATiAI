@@ -93,5 +93,5 @@ public:
 	void setSelectionMethod(int val);
 	void setCrossoverMethod(int val);
 
-    void graphUtils(std::vector<int> profit, int generations);
+    void graphUtils(std::vector<float> profit, int generations);
 };
