@@ -510,7 +510,7 @@ int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 				   int noOfCities, int noOfItems, Knapsack &knapsack)
 {
 	//std::cout << "\nSelecion: tournament ";
-	for(int k = 0; k < popSize / 2; k++)
+	for(int k = 1; k < popSize / 2; k++)
 	{
 		parentA.clear();
 		parentA.resize(noOfCities + 1 + noOfItems);
@@ -587,6 +587,21 @@ int GA::tournament(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		childrenPop.push_back(childA);
 		childrenPop.push_back(childB);
 	}
+	float firstBestProfit = std::numeric_limits<float>::min();
+	int first_best = 0;
+	float secondBestProfit = std::numeric_limits<float>::min();
+	int second_best = 1;
+	for(int i = 0; i < popSize; i++)
+	{
+		float tmpProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, parentsPop[i], 
+										  noOfCities, noOfItems, knapsack);
+		if(tmpProfit > firstBestProfit)
+			first_best = i;
+		else if(tmpProfit > secondBestProfit)
+			second_best = i;
+	}
+	childrenPop.push_back(parentsPop[first_best]);
+	childrenPop.push_back(parentsPop[second_best]);
 	return 0;
 }
 
@@ -611,7 +626,7 @@ int GA::roulette(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 		previousChance = rouletteWheel[i].chance;
 	}
 
-	for(int k = 0; k < popSize / 2; k++)
+	for(int k = 1; k < popSize / 2; k++)
 	{
 		parentA.clear();
 		parentA.resize(noOfCities + 1 + noOfItems);
@@ -651,6 +666,21 @@ int GA::roulette(std::vector<std::vector<float>> &adjacancyMatrix, std::vector<I
 		childrenPop.push_back(childA);
 		childrenPop.push_back(childB);
 	}
+	float firstBestProfit = std::numeric_limits<float>::min();
+	int first_best = 0;
+	float secondBestProfit = std::numeric_limits<float>::min();
+	int second_best = 1;
+	for(int i = 0; i < popSize; i++)
+	{
+		float tmpProfit = calculateProfit(adjacancyMatrix, valuableItemsMatrix, parentsPop[i], 
+										  noOfCities, noOfItems, knapsack);
+		if(tmpProfit > firstBestProfit)
+			first_best = i;
+		else if(tmpProfit > secondBestProfit)
+			second_best = i;
+	}
+	childrenPop.push_back(parentsPop[first_best]);
+	childrenPop.push_back(parentsPop[second_best]);
 	return 0;
 }
 
@@ -676,7 +706,8 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 	
 	Stopwatch *timer = new Stopwatch();
 	timer->point1 = std::chrono::high_resolution_clock::now();
-	
+	std::vector<std::string> popBestProfits;
+
 	while (timer->countTimeDiff() < timeLimitSec * 1E9)
 	{
 		//for observing population
@@ -703,6 +734,8 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 				bestWeight = knapsack.getCurrWeight();
 			}
 		}
+		std::string res = std::to_string(bestProfit) + "\t" + std::to_string(bestWeight) + "\t" + std::to_string(knapsack.getMaxWeight());
+		popBestProfits.push_back(res);
 		childrenPop.clear();
 		childrenPop.resize(0);
 		if(selectionMethod == 1)
@@ -721,6 +754,16 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		//iterations++;
 		noOfGenerations++;
 	} 
+	std::string output;
+    for(int i = 0; i < popBestProfits.size(); i++) 
+    {
+        output += popBestProfits[i] + "\t" + std::to_string(i) + '\n';
+    }
+    //output += std::to_string(noOfGenerations);
+    //std::ofstream output1("D:\\Studia\\Magisterka\\AI\\Project\\PWr-ATiAI\\output\\ga_.csv");
+    std::ofstream output99("output/exp3/ga_gens.log");
+    output99 << output << std::endl;
+    output99.close();
 
 	std::cout << "Path:\t";
 	for (int i = 0; i < noOfCities + 1; i++)
@@ -733,7 +776,7 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 		if(bestFound[noOfCities + 1 + i] == 1)
 			std::cout << i << "\t";
 	}
-	std::cout << "\nNumber of generations:\t" << noOfGenerations;
+	std::cout << "\nGenerations:\t" << noOfGenerations;
 	std::cout << "\nWeight:\t" << bestWeight << " / " << knapsack.getMaxWeight();
 	std::cout << "\nProfit:\t" << bestProfit << std::endl;
 	bestFound.clear();
