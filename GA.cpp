@@ -760,7 +760,7 @@ float GA::randFraction(void)
 	return randNum(1, 1E9) / 1E9;
 }
 
-// getters
+// Getters
 std::vector<Item> GA::getItemsFromCurrCity(int currCity, std::vector<Item> allItems) 
 {
 	std::vector<Item> currItems;
@@ -827,7 +827,7 @@ int GA::getCrossoverMethod()
 	return crossoverMethod;
 }
 
-// setters
+// Setters
 void GA::setMutationRatio(float val)
 {
 	mutRatio = val;
