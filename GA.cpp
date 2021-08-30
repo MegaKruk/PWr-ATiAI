@@ -59,7 +59,8 @@ int GA::popInit(int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<I
 	}
 
 	//for observing population
-	/*for (int k = 0; k < parentsPop.size(); k++)
+	/*
+	for (int k = 0; k < parentsPop.size(); k++)
 	{
 		std::cout << k << ": ";
 		for (int l = 0; l < parentsPop[k].size(); l++)
@@ -67,7 +68,8 @@ int GA::popInit(int noOfCities, int noOfItems, Knapsack &knapsack, std::vector<I
 			std::cout << parentsPop[k][l] << "\t";
 		}
 		std::cout << std::endl;
-	}*/
+	}
+	*/
 	return 0;
 }
 
