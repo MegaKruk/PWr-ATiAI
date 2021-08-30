@@ -682,7 +682,8 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 	while (timer->countTimeDiff() < timeLimitSec * 1E9)
 	{
 		//for observing population
-		/*for (int k = 0; k < parentsPop.size(); k++)
+		/*
+		for (int k = 0; k < parentsPop.size(); k++)
 		{
 			std::cout << k << ": ";
 			for (int l = 0; l < parentsPop[k].size(); l++)
@@ -690,7 +691,8 @@ float GA::solverGA(std::vector<std::vector<float>> &adjacancyMatrix, std::vector
 				std::cout << parentsPop[k][l] << "\t";
 			}
 			std::cout << std::endl;
-		}*/
+		}
+		*/
 
 		// Assess fitness of every P(i)
 		for (int i = 0; i < popSize; i++)
